@@ -30,15 +30,17 @@ const flexColumnCenter = {
   alignItems: "center",
 };
 
+const lineHeight = {
+  height: 9,
+  position: "relative",
+  left: 30,
+};
+
 export const useStyles = makeStyles({
   //Dashboard style
   topContainer: {
     width: "100%",
     height: 150,
-  },
-  dashboardHeaderContainer: {
-    width: "40%",
-    ...flexRowCenter,
   },
   authContainer: {
     width: "100%",
@@ -95,27 +97,44 @@ export const useStyles = makeStyles({
     ...dashPaperCommon,
     background: "linear-gradient(#25ABED,#4B58F7)",
   },
+  lineHeightyellow: {
+    width: "55%",
+    background: " #FFA456",
+    ...lineHeight,
+  },
 
   //Dashboard style
 
+  //Donar Registration
+  gridStyle: {
+    maxWidth: width,
+  },
+  lineHeightgreen: {
+    width: "85%",
+    background: "#4AF560",
+    ...lineHeight,
+  },
+
+  //Donar Registration
+
   //Common component styles
+  commonHeaderContainer: {
+    width: "35%",
+    ...flexRowCenter,
+  },
   headerTypo: {
     fontWeight: "bolder",
     fontFamily: "Gotham Black,  sans-serif",
   },
-  headerCompartment: {
-    woidth: "100%",
-    display: "flex",
-    position: "absolute",
-    left: 185,
-  },
-  lineHeight: {
+  headerTextcontainer: {
     width: "100%",
-    height: 10,
-    background: "#FFA456",
-    position: "absolute",
-    left: 30,
-    top: 50,
+    display: "flex",
+    flexDirection: "column",
   },
+
   //Common component styles
+
+  formContainer: {
+    width: "100%",
+  },
 });
