@@ -1,52 +1,24 @@
-require('dotenv').config(); //dotenv package
+require('dotenv').config();
+const express = require('express');
+const app = express();
 
-const mongoose = require('mongoose'); //mongoose
-const express = require("express");
-const app =express(); //express
-//middleware to parse incoming requests like email name etc 
-const bodyParser = require("body-parser");
-// handles header
-const cookieParser = require('cookie-parser');
-//cross origin resouces sharing (allows resricted domain of info from anywhere)
-const cors = require('cors');
 
-//My routes
-//bringing routes from routes
-const authRoutes = require("./routes/auth");
-const userRoutes = require("./routes/user");
+const db = process.env.DATABASE;
 
-//process.env is from dotenv package12345671
-//Db connection
-mongoose.connect(process.env.DATABASE,
-{
-    useNewUrlParser: true, //in documentation
+// connecting to the server
+mongoose.connect(db, {
+    useNewUrlParser: true,
+    useCreateIndex : true,
     useUnifiedTopology: true,
-    useCreateIndex:true
-}).then(()=>{
-    console.log("DB connected");
-});
-// .catch(
-//     console.log("DB PROBLEM")
-// );
-// myfun.run().then().catch("this to catch errors")
-// end to connection
+    useFindAndModify: false
+}).then(() => {
+    console.log('Connection Succesful');
+}).catch((err) => console.log('no connection'));
 
+const donorInfo = require('./routes/donorInfo');
 
-//middlewares (in between)
-app.use(bodyParser.json());
-//helps to put the values in the cookiee or delete a value
-app.use(cookieParser());
-app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-//Routes
-//when somebody visits
-app.use("/api",authRoutes);
-//user routes
-app.use("/api",userRoutes);
-//const port = 8000;
+app.use('/api/donorInfo',donorInfo);
 
-const port = process.env.PORT || 8000;
-//Lisiten to port.
-app.listen(port, () => {
-console.log(`Server running on port ${port} 🔥`);
-});
