@@ -34,7 +34,8 @@ const donorSchema = new mongoose.Schema({
         type : Number,
         maxlength:10
     },
-    address:{
+    
+    address: {
         lane : {
             type : String,
             trim: true
@@ -59,6 +60,7 @@ const donorSchema = new mongoose.Schema({
             maxlength : 6
         }
     },
+    
     bloodGroup : {
         type: String,
         required: true
@@ -71,4 +73,4 @@ const donorSchema = new mongoose.Schema({
 
 });
 
-module.exports = mongoose.model("Donor", donorSchema);
+module.exports = mongoose.model("Donor1", donorSchema);

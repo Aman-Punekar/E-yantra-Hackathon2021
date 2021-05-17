@@ -1,6 +1,8 @@
 require('dotenv').config();
-const express = require('express');
-const app = express();
+const express = require("express");
+const app =express(); //express
+const mongoose = require('mongoose'); //mongoose
+
 
 
 const db = process.env.DATABASE;
@@ -21,4 +23,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use('/api/donorInfo',donorInfo);
+
+app.listen(8000, () => {
+    console.log(`Server running on port 8000 🔥`);
+    });
 
