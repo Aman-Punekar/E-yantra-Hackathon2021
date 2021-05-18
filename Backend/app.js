@@ -23,8 +23,13 @@ mongoose.connect(db, {
     console.log('Connection Succesful');
 }).catch((err) => console.log('no connection'));
 
+
+//routes
 const donorInfo = require('./routes/donorInfo');
 const auth = require('./routes/auth');
+
+
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
