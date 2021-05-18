@@ -5,9 +5,7 @@ const mongoose = require('mongoose'); //mongoose
 
 
 
-const ACCOUNT_SID = 'ACe76bd995e206ab993cdbe06d22004e73';
-const AUTH_TOKEN = '796ec1d88e088c5e177594f5e73ba789';
-const client = require('twilio')(ACCOUNT_SID, AUTH_TOKEN); // configuring twilio
+
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 

@@ -1,6 +1,10 @@
 require('dotenv').config();
 const crypto = require('crypto');   // for encryption
 const jwt = require('jsonwebtoken');  // issuing jwts
+const ACCOUNT_SID = 'ACe76bd995e206ab993cdbe06d22004e73';
+const AUTH_TOKEN = '796ec1d88e088c5e177594f5e73ba789';
+const client = require('twilio')(ACCOUNT_SID, AUTH_TOKEN); // configuring twilio
+
 
 
 // environment variables
@@ -33,14 +37,14 @@ const sendOtp = (req,res) => {
     
     // the following setup is the twilio configuration
 
-    // client.messages
-    // .create({
-    //     body: `your otp is ${otp}`,
-    //     from: '+14793455072',
-    //     to: phone
-    // })
-    // .then((message) => console.log('Success'))
-    // .catch((err) => console.log(err));
+    client.messages
+    .create({
+        body: `your otp is ${otp}`,
+        from: '+14793455072',
+        to: phone
+    })
+    .then((message) => console.log('Success'))
+    .catch((err) => console.log(err));
 
     res.status(200).send({phone, hash: fullhash, otp})
 };
