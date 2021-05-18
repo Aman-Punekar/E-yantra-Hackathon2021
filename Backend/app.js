@@ -3,11 +3,13 @@ const express = require("express");
 const app =express(); //express
 const mongoose = require('mongoose'); //mongoose
 
-const crypto = require('crypto');   // for encryption
-const cookieParser = require('cookie-parser');
-const jwt = require('jsonwebtoken');  // issuing jwts
+
+
+const ACCOUNT_SID = 'ACe76bd995e206ab993cdbe06d22004e73';
+const AUTH_TOKEN = '796ec1d88e088c5e177594f5e73ba789';
 const client = require('twilio')(ACCOUNT_SID, AUTH_TOKEN); // configuring twilio
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 
 

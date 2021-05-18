@@ -1,12 +1,13 @@
 require('dotenv').config();
+const crypto = require('crypto');   // for encryption
+const jwt = require('jsonwebtoken');  // issuing jwts
 
 
 // environment variables
 const JWT_AUTH_TOKEN = process.env.JWT_AUTH_TOKEN;
 const JWT_REFRESH_TOKEN = process.env.JWT_REFRESH_TOKEN;
 const smsKey = process.env.SMS_SECRET_KEY;
-const ACCOUNT_SID = 'ACe76bd995e206ab993cdbe06d22004e73';
-const AUTH_TOKEN = '796ec1d88e088c5e177594f5e73ba789';
+
 let refreshTokens = [];
 
 /*
@@ -23,7 +24,7 @@ const sendOtp = (req,res) => {
     
     const phone = req.body.phone;
     const otp = Math.floor(100000 + Math.random()*900000); // generating otp
-    const ttl = 4*60*1000;
+    const ttl = 30*60*1000;
     const expires = Date.now() +ttl; // expiry time
     const data = `${phone}.${otp}.${expires}`;
     const hash = crypto.createHmac('sha256', smsKey).update(data).digest('hex');
@@ -75,15 +76,15 @@ const verifyOtp  = (req,res) => {
         //return res.status(202).send({msg:'User confirmed'});
 
         
-        const accessToken = jwt.sign({data:phone}, JWT_AUTH_TOKEN, {expiresIn: '30s'});
-        const refreshToken = jwt.sign({data:phone}, JWT_REFRESH_TOKEN, {expiresIn: '1ys'});
+        const accessToken = jwt.sign({data:phone}, JWT_AUTH_TOKEN, {expiresIn: '1d'});
+        const refreshToken = jwt.sign({data:phone}, JWT_REFRESH_TOKEN, {expiresIn: '1y'});
         refreshTokens.push(refreshToken);
 
 
         res
 			.status(202)
 			.cookie('accessToken', accessToken, {
-				expires: new Date(new Date().getTime() + 30 * 1000),
+				expires: new Date(new Date().getTime() + 86400 * 1000),
 				sameSite: 'strict',
 				httpOnly: true
 			})
@@ -92,10 +93,11 @@ const verifyOtp  = (req,res) => {
 				sameSite: 'strict',
 				httpOnly: true
 			})
-			.cookie('authSession', true, { expires: new Date(new Date().getTime() + 30 * 1000), sameSite: 'strict' })
+			.cookie('authSession', true, { expires: new Date(new Date().getTime() + 86400 * 1000), sameSite: 'strict' })
 			.cookie('refreshTokenID', true, {
 				expires: new Date(new Date().getTime() + 31557600000),
-				sameSite: 'strict'
+                sameSite: 'strict'
+				
 			})
 			.send({ msg: 'Device verified' });
     }else{
@@ -110,7 +112,7 @@ const refresh = (req,res,next)=>{
 
     jwt.verify(refreshToken, JWT_REFRESH_TOKEN,(err, phone) => {
         if(!err){
-            const accessToken = jwt.sign({data:phone}, JWT_AUTH_TOKEN, {expiresIn: '30s'});
+            const accessToken = jwt.sign({data:phone}, JWT_AUTH_TOKEN, {expiresIn: '1d'});
             res
             .status(202)
             .cookie('accessToken', accessToken, {

@@ -6,10 +6,10 @@ const { sendOtp,
         logout
       } = require('../controllers/auth');
 
-app.post('/sendOTP', sendOtp );
-app.post('/verifyOTP', verifyOtp );
-app.post('/refresh', refresh );
-app.get('/logout', logout);
+router.post('/sendOTP', sendOtp );
+router.post('/verifyOTP', verifyOtp );
+router.post('/refresh', refresh );
+router.get('/logout', logout);
 
 
 module.exports = router;
@@ -34,7 +34,7 @@ module.exports = router;
 
 
 // async function authenticateUser(req, res, next){
-//     const accessToken = res.cookies.accessToken;
+//     const accessToken = req.cookies.accessToken;
 
 //     jwt.verify(accessToken, JWT_AUTH_TOKEN, async(err, phone) => {
 //         if(phone){
