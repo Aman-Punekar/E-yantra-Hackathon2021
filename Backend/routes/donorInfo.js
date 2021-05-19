@@ -1,11 +1,13 @@
 // routes require only express and Router
 const express = require("express");
 const router = express.Router();
-const {addDonorInfo} = require('../controllers/donorInfo');
-const {authenticateUser} = require('./authMiddlewares');
+const {addDonorInfo, updateDonorInfo} = require('../controllers/donorInfo');
+const authenticateUser = require('./authMiddlewares').authenticateUser;
 
 
 
-router.post('/post',authenticateUser, addDonorInfo);
+
+router.post('/postDonorInfo',authenticateUser, addDonorInfo);
+router.post('/updateDonorInfo',authenticateUser, updateDonorInfo);
 
 module.exports = router;

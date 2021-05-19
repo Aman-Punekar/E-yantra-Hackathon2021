@@ -2,13 +2,17 @@ const express = require("express");
 const router = express.Router();
 const { sendOtp,
         verifyOtp,
-        refresh,
+        donorLogin,
         logout
       } = require('../controllers/auth');
 
-router.post('/sendOTP', sendOtp );
+const isMember = require('./authMiddlewares').isMemeber;
+
+
+
+router.post('/sendOTP',isMember, sendOtp );
 router.post('/verifyOTP', verifyOtp );
-router.post('/refresh', refresh );
+router.post('/donorLogin', donorLogin);
 router.get('/logout', logout);
 
 

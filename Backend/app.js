@@ -27,6 +27,7 @@ mongoose.connect(db, {
 //routes
 const donorInfo = require('./routes/donorInfo');
 const auth = require('./routes/auth');
+const visitor = require('./routes/visitor');
 
 
 
@@ -36,8 +37,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors({origin:'http://localhost:8000', credentials:true}))
 
-app.use('/api/donorInfo',donorInfo);
+app.use('/api/donor',donorInfo);
 app.use('/api/auth',auth);
+app.use('/api/visitor',visitor);
+
 
 app.listen(8000, () => {
     console.log(`Server running on port 8000 🔥`);

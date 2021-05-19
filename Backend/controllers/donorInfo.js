@@ -19,6 +19,8 @@ const addDonorInfo = (req,res,) =>{
         },
         
         bloodGroup : req.body.bloodGroup,
+        isAvailable : true
+
         
     })
 
@@ -36,4 +38,25 @@ const addDonorInfo = (req,res,) =>{
        
 }
 
-module.exports = {addDonorInfo};
+const updateDonorInfo = (req,res) => {
+
+    Donor.updateOne(
+        {mobileNo: req.uniqueMobileNo},
+        {
+          $set: req.body
+        }
+    )
+      .then((user) => {
+        // console.log(user);
+        res.status(200).send({msg: 'Update Successful'});
+    })
+        .catch((err) => {
+        // console.log(err);
+        res.status(400).send({
+            err:err, msg:'No able to update'
+       });
+    })
+}
+
+
+module.exports = {addDonorInfo,updateDonorInfo};

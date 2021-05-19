@@ -1,6 +1,8 @@
 require('dotenv').config();
 const crypto = require('crypto'); // for encryption
 const jwt = require('jsonwebtoken'); // issuing jwts
+const donorCredentials = require("../models/donorCredentials");
+const {genPasswordHash, validPassword} = require('../lib/utils');
 const ACCOUNT_SID = 'ACe76bd995e206ab993cdbe06d22004e73';
 const AUTH_TOKEN = '796ec1d88e088c5e177594f5e73ba789';
 const client = require('twilio')(ACCOUNT_SID, AUTH_TOKEN); // configuring twilio
@@ -10,7 +12,10 @@ const JWT_AUTH_TOKEN = process.env.JWT_AUTH_TOKEN;
 const JWT_REFRESH_TOKEN = process.env.JWT_REFRESH_TOKEN;
 const smsKey = process.env.SMS_SECRET_KEY;
 
-let refreshTokens = [];
+
+
+
+
 
 /*
 '/sendOTP' route: 
@@ -22,6 +27,8 @@ appended creating fullhash.
 
 */
 const sendOtp = (req, res) => {
+
+	const phoneTwilio = req.body.phone.toString(); + '+91'
 	const phone = req.body.phone;
 	const otp = Math.floor(100000 + Math.random() * 900000); // generating otp
 	const ttl = 30 * 60 * 1000;
@@ -32,14 +39,14 @@ const sendOtp = (req, res) => {
 
 	// the following setup is the twilio configuration
 
-	client.messages
-		.create({
-			body: `your otp is ${otp}`,
-			from: '+14793455072',
-			to: phone
-		})
-		.then((message) => console.log('Success'))
-		.catch((err) => console.log(err));
+	// client.messages
+	// 	.create({
+	// 		body: `your otp is ${otp}`,
+	// 		from: '+14793455072',
+	// 		to: phoneTwilio
+	// 	})
+	// 	.then((message) => console.log('Success'))
+	// 	.catch((err) => console.log(err));
 
 	res.status(200).send({
 		phone,
@@ -78,7 +85,8 @@ const verifyOtp = (req, res) => {
 	const newCalculatedHash = crypto.createHmac('sha256', smsKey).update(data).digest('hex');
 
 	if (newCalculatedHash === hashValue) {
-		//return res.status(202).send({msg:'User confirmed'});
+		
+		genPasswordHash(req.body.password, phone);
 
 		const accessToken = jwt.sign(
 			{
@@ -89,16 +97,7 @@ const verifyOtp = (req, res) => {
 				expiresIn: '1d'
 			}
 		);
-		const refreshToken = jwt.sign(
-			{
-				data: phone
-			},
-			JWT_REFRESH_TOKEN,
-			{
-				expiresIn: '1y'
-			}
-		);
-		refreshTokens.push(refreshToken);
+		
 
 		res
 			.status(202)
@@ -107,19 +106,12 @@ const verifyOtp = (req, res) => {
 				sameSite: 'strict',
 				httpOnly: true
 			})
-			.cookie('refreshToken', refreshToken, {
-				expires: new Date(new Date().getTime() + 31557600000),
-				sameSite: 'strict',
-				httpOnly: true
-			})
+			
 			.cookie('authSession', true, {
 				expires: new Date(new Date().getTime() + 86400 * 1000),
 				sameSite: 'strict'
 			})
-			.cookie('refreshTokenID', true, {
-				expires: new Date(new Date().getTime() + 31557600000),
-				sameSite: 'strict'
-			})
+			
 			.send({
 				msg: 'Device verified'
 			});
@@ -131,62 +123,72 @@ const verifyOtp = (req, res) => {
 	}
 };
 
-const refresh = (req, res, next) => {
-	const refreshToken = req.cookies.refreshToken;
-	if (!refreshToken)
-		return res.status(403).send({
-			msg: 'refresh token not found, please login again'
-		});
-	if (!refreshTokens.includes(refreshToken))
-		return res.status(403).send({
-			msg: 'refresh token blocked, please login again'
-		});
 
-	jwt.verify(refreshToken, JWT_REFRESH_TOKEN, (err, phone) => {
-		if (!err) {
-			const accessToken = jwt.sign(
-				{
-					data: phone
-				},
-				JWT_AUTH_TOKEN,
-				{
-					expiresIn: '1d'
-				}
-			);
-			res
-				.status(202)
-				.cookie('accessToken', accessToken, {
-					expires: new Date(new Date().getTime() + 30 * 1000),
-					sameSite: 'strict',
-					httpOnly: true
-				})
-				.cookie('authSession', true, {
-					expires: new Date(new Date().getTime() + 30 * 1000)
-				})
-				.send({
-					previousSessionExpiry: true,
-					success: true
-				});
-		} else {
-			return res.status(403).send({
-				success: false,
-				msg: 'Invalid Refresh Token'
-			});
-		}
-	});
-};
+const donorLogin = (req, res) => {
+
+	donorCredentials.findOne({ mobileNo: req.body.phone })
+        .then((user) => {
+
+            if (!user) {
+                return res.status(401).json({ success: false, msg: `There is no account of ${req.body.phone}` });
+            }
+            
+            // Function defined at bottom of app.js
+            const isValid = validPassword(req.body.password, user.hash, user.salt);
+            
+            if (isValid) {
+
+                const accessToken = jwt.sign(
+					{
+						mobileNo: user.mobileNo,
+						
+
+					},
+					JWT_AUTH_TOKEN,
+					{
+						expiresIn: '1d'
+					}
+				);
+
+				res
+					.status(202)
+					.cookie('accessToken', accessToken, {
+						expires: new Date(new Date().getTime() + 86400 * 1000),
+						sameSite: 'strict',
+						httpOnly: true
+					})
+					
+					.cookie('authSession', true, {
+						expires: new Date(new Date().getTime() + 86400 * 1000),
+						sameSite: 'strict'
+					})
+					.send(user);
+
+				
+            } else {
+
+                res.status(401).json({ success: false, msg: "Wrong Password" });
+
+            }
+
+        })
+        .catch((err) => {
+            res.status(400).send({err:err});
+        });
+
+}
 
 const logout = (req, res) => {
 	res.clearCookie('refreshToken').clearCookie('accessToken').clearCookie('authSession').clearCookie('refreshTokenID');
-	// .send('User logged out')
+	
 	res.json({
-		message: 'User signout successfully'
+		message: 'User signed out successfully'
 	});
 };
 
 module.exports = {
 	sendOtp,
 	verifyOtp,
-	refresh,
+	donorLogin,
 	logout
 };

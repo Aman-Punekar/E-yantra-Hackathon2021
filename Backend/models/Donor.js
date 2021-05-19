@@ -1,6 +1,6 @@
 // model require only the mongoose and schema
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+
 
 const donorSchema = new mongoose.Schema({
 	firstName: {
@@ -27,7 +27,8 @@ const donorSchema = new mongoose.Schema({
 	mobileNo: {
 		type: Number,
 		maxlength: 10,
-		unique: true
+		unique: true,
+		required: true
 	},
 	alternateNo: {
 		type: Number,
@@ -63,10 +64,11 @@ const donorSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
+	isAvailable : Boolean,
 	profile: {
 		data: Buffer,
 		contentType: String
 	}
 });
 
-module.exports = mongoose.model('Donor1', donorSchema);
+module.exports = mongoose.model('Donor', donorSchema);
