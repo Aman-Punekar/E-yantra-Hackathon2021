@@ -62,4 +62,16 @@ export const useStyles = makeStyles((theme) => ({
     height: 80,
     borderRadius: 25,
   },
+  submitButon: {
+    background: "#0d00ff",
+    color: "#fff",
+    " &:hover": {
+      background: "rgba(13, 0, 255,0.8)",
+      color: "#fff",
+    },
+    textTransform: "capitalize",
+    fontFamily: "Gotham",
+    fontWeight: "500",
+    borderRadius: 50,
+  },
 }));

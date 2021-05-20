@@ -20,17 +20,34 @@ import Aos from "aos";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import { LoginPageData } from "../../constants/stringConstants";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../../Redux/LoginSlice";
 
 function LoginPage({ width }) {
   const styles = useStyles();
   const [mobile, setmobile] = useState("");
   const [password, setpassword] = useState("");
   const [showPassword, setshowPassword] = useState(false);
+  const dispatch = useDispatch();
   const tabSmall = /xs|sm/.test(width);
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (mobile === "" || password === "") {
+      window.alert("Please enter the credentials!!");
+    } else {
+      const data = {
+        phone: parseInt(mobile),
+        password,
+      };
+      dispatch(loginUser(data));
+    }
+  };
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
@@ -139,6 +156,7 @@ function LoginPage({ width }) {
                 transition: { duration: 0.3 },
               }}
               style={{ marginBottom: 30 }}
+              onClick={handleSubmit}
             >
               {LoginPageData.Submit}
             </Button>

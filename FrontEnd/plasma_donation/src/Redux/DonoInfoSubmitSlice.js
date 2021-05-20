@@ -1,41 +1,43 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../Api/api";
 
-export const sendSignup = createAsyncThunk(
-  "signup/sendSignup",
+export const donorForm = createAsyncThunk(
+  "donorInfo/donorForm",
   async (data) => {
-    const phone = parseInt(data.phone);
-    const res = await api.post("/api/auth/sendOTP", { phone });
+    const res = await api.post("/api/donor/postDonorInfo", data, {
+      withCredentials: true,
+    });
     const dataResponse = JSON.parse(JSON.stringify(res.data));
     console.log(dataResponse);
     return dataResponse;
   }
 );
 
-const signupSlice = createSlice({
-  name: "signup",
+const donorInfo = createSlice({
+  name: "donorInfo",
   initialState: {
     error: "",
     message: "",
     isLoading: false,
-    dataSend: null,
+    signupSendStatus: false,
+    shortData: null,
   },
   reducers: {},
   extraReducers: {
-    [sendSignup.pending]: (state) => {
+    [donorForm.pending]: (state) => {
       state.isLoading = true;
     },
-    [sendSignup.rejected]: (state, action) => {
+    [donorForm.rejected]: (state, action) => {
       state.isLoading = false;
       state.error = action.error.message;
     },
-    [sendSignup.fulfilled]: (state, action) => {
+    [donorForm.fulfilled]: (state, action) => {
       state.isLoading = false;
       state.signupSendStatus = true;
-      state.dataSend = action.payload;
+      state.shortData = action.payload;
     },
   },
 });
 
-const SignupSlice = signupSlice.reducer;
-export default SignupSlice;
+const DonorInfo = donorInfo.reducer;
+export default DonorInfo;

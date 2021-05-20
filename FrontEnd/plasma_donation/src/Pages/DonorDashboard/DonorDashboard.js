@@ -26,6 +26,8 @@ import Aos from "aos";
 import { motion } from "framer-motion";
 import { MainWrapper, FormComp } from "./FormBodyComponent";
 import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
+import { useDispatch, useSelector } from "react-redux";
+import { donorForm } from "../../Redux/DonoInfoSubmitSlice";
 
 const BootstrapInput = withStyles((theme) => ({
   root: {
@@ -54,26 +56,28 @@ const BootstrapInput = withStyles((theme) => ({
 
 function DonorDashboard({ width }) {
   const styles = useStyles();
+  const dispatch = useDispatch();
+  const MobileNumber = useSelector(
+    (state) => state.SignupOTPSlice.shortData.phone
+  );
 
   const [DonorInfo, setDonorInfo] = useState({
     Name: "",
     LastName: "",
     Age: "",
-    // Gender: "female",
+    District: "",
     Email: "",
-    Mobile: "",
+    Mobile: MobileNumber,
     AlternateMobile: "",
     Lane: "",
-    Landmark: "",
     City: "",
     State: "",
     ZipCode: "",
     BloodGroup: "",
-    TestTaken: "Yes",
-    Injury: "No",
-    Terms: false,
   });
   const [Gender, setGender] = useState("female");
+  const [Terms, setTerms] = useState(false);
+  const [isAvailable, setisAvailable] = useState(true);
 
   const xsValue = /xs/.test(width);
   const smValue = /sm/.test(width);
@@ -84,6 +88,36 @@ function DonorDashboard({ width }) {
 
   const handleChangeEvents = (event) => {
     setDonorInfo({ ...DonorInfo, [event.target.id]: event.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (DonorInfo.Name !== "") {
+      const data = {
+        firstName: DonorInfo.Name,
+        lastName: DonorInfo.LastName,
+        age: DonorInfo.Age,
+        mobileNo: DonorInfo.Mobile,
+        alternateNo: parseInt(DonorInfo.AlternateMobile),
+        gender: Gender,
+        address: {
+          lane: DonorInfo.Lane,
+          city: DonorInfo.City,
+          district: DonorInfo.District,
+          state: DonorInfo.State,
+          pinCode: parseInt(DonorInfo.ZipCode),
+        },
+        bloodGroup: DonorInfo.BloodGroup,
+        isAvailable: isAvailable,
+      };
+      if (Terms) {
+        dispatch(donorForm(data));
+      } else {
+        window.alert("Please accept our terms!!");
+      }
+    } else {
+      window.alert("Please enter all the Mandatory field!!");
+    }
   };
 
   return (
@@ -291,12 +325,12 @@ function DonorDashboard({ width }) {
               xs={10}
               sm={4}
               md={5}
-              label="Landmark"
-              required={false}
+              label="City/Town"
+              required={true}
               inputProps={{
-                id: "Landmark",
-                placeholder: "eg: Pepsi factory / Rang Layout",
-                value: DonorInfo.Landmark,
+                id: "City",
+                placeholder: "eg: Belgaum",
+                value: DonorInfo.City,
                 onchangeCall: handleChangeEvents,
               }}
             />
@@ -306,12 +340,12 @@ function DonorDashboard({ width }) {
               xs={10}
               sm={4}
               md={5}
-              label="City/Town"
-              required={true}
+              label="District"
+              required={false}
               inputProps={{
-                id: "City",
+                id: "District",
                 placeholder: "eg: Belgaum",
-                value: DonorInfo.City,
+                value: DonorInfo.District,
                 onchangeCall: handleChangeEvents,
               }}
             />
@@ -386,9 +420,9 @@ function DonorDashboard({ width }) {
                   }}
                 >
                   <option aria-label="None" value="" />
-                  <option value={10}>B+</option>
-                  <option value={20}>A+</option>
-                  <option value={30}>O+</option>
+                  <option value="B+">B+</option>
+                  <option value="A+">A+</option>
+                  <option value="O+">O+</option>
                 </NativeSelect>
               </FormControl>
             </Grid>
@@ -429,82 +463,14 @@ function DonorDashboard({ width }) {
               item
               container
               xs={10}
-              sm={6}
-              md={5}
-              direction="row"
-              justify="space-between"
-              className={styles.formBodySection}
-            >
-              <FormControl style={{ width: "100%" }}>
-                <Typography varient="subtitle1" className={styles.lableStyle}>
-                  Have you recovered from COVID-19 recently with a RCT-PCR
-                  test??
-                  <span style={{ color: "red" }}>*</span>
-                </Typography>
-                <RadioGroup
-                  aria-label="SomeInfo"
-                  name="TestTaken"
-                  value={DonorInfo.TestTaken}
-                  onChange={handleChangeEvents}
-                  id="TestTaken"
-                >
-                  <FormControlLabel
-                    value="Yes"
-                    control={<Radio />}
-                    label="Yes"
-                  />
-                  <FormControlLabel value="No" control={<Radio />} label="No" />
-                </RadioGroup>
-              </FormControl>
-            </Grid>
-          </MainWrapper>
-          <MainWrapper xsValue={xsValue} smValue={smValue}>
-            <Grid
-              item
-              container
-              xs={10}
-              sm={6}
-              md={5}
-              direction="row"
-              justify="space-between"
-              className={styles.formBodySection}
-            >
-              <FormControl style={{ width: "100%" }}>
-                <Typography varient="subtitle1" className={styles.lableStyle}>
-                  Are you currently suffering from a medical condition, illness,
-                  or injury?
-                  <span style={{ color: "red" }}>*</span>
-                </Typography>
-                <RadioGroup
-                  aria-label="SomeInfo"
-                  name="Injury"
-                  value={DonorInfo.Injury}
-                  onChange={handleChangeEvents}
-                  id="Injury"
-                >
-                  <FormControlLabel
-                    value="Yes"
-                    control={<Radio />}
-                    label="Yes"
-                  />
-                  <FormControlLabel value="No" control={<Radio />} label="No" />
-                </RadioGroup>
-              </FormControl>
-            </Grid>
-          </MainWrapper>
-          <MainWrapper xsValue={xsValue} smValue={smValue}>
-            <Grid
-              item
-              container
-              xs={10}
               direction="row"
               justify="space-between"
               className={styles.formBodySection}
             >
               <div style={{ display: "flex", flexDirection: "row" }}>
                 <Checkbox
-                  checked={DonorInfo.Terms}
-                  onChange={handleChangeEvents}
+                  checked={Terms}
+                  onChange={() => setTerms(!Terms)}
                   inputProps={{ "aria-label": "checkbox" }}
                 />
                 <Typography
@@ -536,6 +502,7 @@ function DonorDashboard({ width }) {
                   scale: 1.2,
                   transition: { duration: 0.3 },
                 }}
+                onClick={handleSubmit}
               >
                 Submit
               </Button>

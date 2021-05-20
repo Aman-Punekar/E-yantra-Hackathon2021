@@ -1,12 +1,3 @@
-// import {
-//   persistReducer,
-//   FLUSH,
-//   REHYDRATE,
-//   PAUSE,
-//   PERSIST,
-//   PURGE,
-//   REGISTER,
-// } from "redux-persist";
 import {
   combineReducers,
   configureStore,
@@ -16,21 +7,17 @@ import api from "../Api/api";
 
 import SignupSlice from "./SignInSlice";
 import SignupOTPSlice from "./OtpSendSlice";
+import DonorInfo from "./DonoInfoSubmitSlice";
+import LoginSlice from "./LoginSlice";
+import DonorInfoList from "./DonorListSlice";
 
 const reducer = combineReducers({
   SignupSlice,
   SignupOTPSlice,
+  DonorInfo,
+  LoginSlice,
+  DonorInfoList,
 });
-
-// const persistConfig = {
-//   key: "root",
-//   storage: AsyncStorage,
-//   whitelist: [
-//     //  'WifiConnectionConfirmSlice'
-//   ],
-// };
-
-// const persistedReducer = persistReducer(persistConfig, reducer);
 
 const store = configureStore({
   reducer: reducer,
@@ -38,9 +25,6 @@ const store = configureStore({
     thunk: {
       extraArgument: api,
     },
-    // serializableCheck: {
-    //   ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-    // },
   }),
 });
 

@@ -7,6 +7,13 @@ import {
   Button,
   withWidth,
   Divider,
+  TextField,
+  NativeSelect,
+  withStyles,
+  InputBase,
+  FormControl,
+  FormHelperText,
+  FormLabel,
 } from "@material-ui/core";
 import Lottie from "lottie-react";
 import DocFrontLine from "../../assets/json/DocsFrontLine.json";
@@ -22,13 +29,61 @@ import {
   animated,
   useSpringRef,
 } from "@react-spring/web";
-import { data } from "../../constants/data";
 import classes from "./App.module.css";
 import { LandingPageContent } from "../../constants/stringConstants";
+import { useDispatch, useSelector } from "react-redux";
+import { donorList } from "../../Redux/DonorListSlice";
+import DonorInfo from "../../Redux/DonoInfoSubmitSlice";
+
+const BootstrapInput = withStyles((theme) => ({
+  root: {
+    "label + &": {
+      marginTop: theme.spacing(3),
+    },
+  },
+  input: {
+    borderRadius: 4,
+    position: "relative",
+    backgroundColor: theme.palette.background.paper,
+    border: "1px solid #ced4da",
+    fontSize: 16,
+    padding: "10px 26px 10px 12px",
+    transition: theme.transitions.create(["border-color", "box-shadow"]),
+    // Use the system font instead of the default Roboto font.
+    fontFamily: "Roboto",
+    fontWeight: "bold",
+    "&:focus": {
+      borderRadius: 4,
+      borderColor: "#80bdff",
+      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.25)",
+    },
+  },
+}))(InputBase);
+const Data = [
+  {
+    firstName: "Not selected BloodGroup",
+  },
+];
 
 function LandingPage({ width }) {
   const styles = useStyles();
   const tabletDown = /sm|xs/.test(width);
+  const mobileDown = /xs/.test(width);
+  const [BloodGroup, setBloodGroup] = useState("");
+  const [ZipCode, setZipCode] = useState("");
+  const [City, setCity] = useState("");
+  const [Choose, setChoose] = useState("");
+  const dispatch = useDispatch();
+  const DonorsList = useSelector((state) => state.DonorInfoList.donorList);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const data = {
+      bloodGroup: BloodGroup,
+      city: City,
+    };
+    dispatch(donorList(data));
+  };
 
   //The animation
 
@@ -45,10 +100,12 @@ function LandingPage({ width }) {
     },
   });
 
+  const Decide = DonorsList === null ? Data : DonorsList;
+
   const transApi = useSpringRef();
-  const transition = useTransition(open ? data : [], {
+  const transition = useTransition(open ? Decide : [], {
     ref: transApi,
-    trail: 400 / data.length,
+    trail: 400 / Decide.length,
     from: { opacity: 0, scale: 0 },
     enter: { opacity: 1, scale: 1 },
     leave: { opacity: 0, scale: 0 },
@@ -138,11 +195,119 @@ function LandingPage({ width }) {
         </Grid>
         <Typography
           variant="h4"
-          style={{ width: "100%", textAlign: "center", marginTop: 50 }}
+          style={{
+            width: "100%",
+            textAlign: "center",
+            marginTop: 50,
+          }}
           data-aos="fade-up"
         >
           Quick Check for available donors
         </Typography>
+
+        <Grid
+          container
+          direction={mobileDown ? "column" : "row"}
+          justify="center"
+          alignItems="center"
+          data-aos="fade-up"
+        >
+          <Grid
+            item
+            container
+            xs={12}
+            sm={2}
+            alignItems="center"
+            justify="center"
+          >
+            <FormControl style={{ width: "80%", marginTop: 30 }}>
+              <NativeSelect
+                id="BloodGroup"
+                value={BloodGroup}
+                onChange={(e) => setBloodGroup(e.target.value)}
+                input={<BootstrapInput />}
+                inputProps={{
+                  style: { fontFamily: "Roboto", fontWeight: "bold" },
+                }}
+              >
+                <option aria-label="None" value="" />
+                <option value="B+">B+</option>
+                <option value="A+">A+</option>
+                <option value="O+">O+</option>
+              </NativeSelect>
+            </FormControl>
+          </Grid>
+          <Grid
+            item
+            container
+            xs={12}
+            sm={2}
+            alignItems="center"
+            justify="center"
+          >
+            <FormControl style={{ width: "80%", marginTop: 30 }}>
+              <NativeSelect
+                id="Choose"
+                value={Choose}
+                onChange={(e) => setChoose(e.target.value)}
+                input={<BootstrapInput />}
+                inputProps={{
+                  style: { fontFamily: "Roboto", fontWeight: "bold" },
+                }}
+              >
+                <option aria-label="None" value="" />
+                <option value="ZipCode">ZipCode</option>
+                <option value="City">City</option>
+              </NativeSelect>
+            </FormControl>
+          </Grid>
+          <Grid
+            item
+            container
+            xs={12}
+            sm={2}
+            alignItems="center"
+            justify="center"
+          >
+            <FormControl style={{ width: "80%", marginTop: 30 }}>
+              <TextField
+                variant="outlined"
+                id="City/ZipCode"
+                size="small"
+                value={Choose === "City" ? City : ZipCode}
+                placeholder="Please enter the value!!"
+                onChange={(e) =>
+                  Choose === "City"
+                    ? setCity(e.target.value)
+                    : setZipCode(e.target.value)
+                }
+              />
+            </FormControl>
+          </Grid>
+          <Grid
+            item
+            container
+            xs={12}
+            sm={2}
+            alignItems="center"
+            justify="center"
+          >
+            <FormControl style={{ width: "80%", marginTop: 30 }}>
+              <Button
+                variant="outlined"
+                className={styles.submitButon}
+                component={motion.a}
+                whileHover={{
+                  scale: 1.2,
+                  transition: { duration: 0.3 },
+                }}
+                onClick={handleSubmit}
+              >
+                Check
+              </Button>
+            </FormControl>
+          </Grid>
+        </Grid>
         <Grid container justify="center" alignItems="center" data-aos="fade-up">
           <div className={classes.wrapper}>
             <animated.div
@@ -157,7 +322,7 @@ function LandingPage({ width }) {
             >
               {open ? null : (
                 <Typography variant="subtitle1" className={styles.regCounts}>
-                  Total Registered - 60
+                  Total Registered - {Decide.length}
                 </Typography>
               )}
               {transition((style, item) => (
@@ -172,7 +337,7 @@ function LandingPage({ width }) {
                   }}
                 >
                   <Typography variant="h5" style={{ textAlign: "center" }}>
-                    {item.name}
+                    {item.firstName}
                   </Typography>
                 </Paper>
               ))}

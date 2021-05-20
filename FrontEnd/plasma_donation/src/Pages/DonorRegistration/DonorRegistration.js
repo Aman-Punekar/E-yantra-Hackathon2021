@@ -68,6 +68,7 @@ function DonorRegistration({ width }) {
       hash: responseData.hash,
       phone: responseData.phone,
       otp: OTP,
+      password: verifyPassword,
     };
     dispatch(sendOTP(data));
   };
@@ -88,7 +89,7 @@ function DonorRegistration({ width }) {
   const passwordProps1 = {
     id: "password",
     type: showPassword1 ? "text" : "password",
-    dafaultValue: password,
+    defaultValue: password,
     onChange: (prev) => setpassword(prev.target.value),
     endAdornment: (
       <InputAdornment position="end">
@@ -108,10 +109,10 @@ function DonorRegistration({ width }) {
 
   const passwordProps2 = {
     id: "outlined-error-helper-text",
-    error: password != verifyPassword,
-    helperText: "Password isn't matching",
+    error: password !== verifyPassword,
+    helpertext: "Password isn't matching",
     type: showPassword2 ? "text" : "password",
-    dafaultValue: verifyPassword,
+    defaultValue: verifyPassword,
     onChange: (prev) => setverifyPassword(prev.target.value),
     endAdornment: (
       <InputAdornment position="end">
@@ -259,7 +260,7 @@ function DonorRegistration({ width }) {
               <OtpInput
                 value={OTP}
                 onChange={(value) => setOTP(value)}
-                numInputs={4}
+                numInputs={6}
                 separator={<span> &nbsp; &nbsp;</span>}
                 inputStyle={{
                   fontFamily: "Roboto",
