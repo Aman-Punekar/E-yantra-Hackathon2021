@@ -22,6 +22,9 @@ import Aos from "aos";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import { DashboardRegistration } from "../../constants/stringConstants";
+import { useDispatch, useSelector } from "react-redux";
+import { sendSignup } from "../../Redux/SignInSlice";
+import { sendOTP } from "../../Redux/OtpSendSlice";
 
 function DonorRegistration({ width }) {
   const styles = useStyles();
@@ -32,13 +35,20 @@ function DonorRegistration({ width }) {
   const [showPassword1, setshowPassword1] = useState(false);
   const [showPassword2, setshowPassword2] = useState(false);
   const tabSmall = /xs|sm/.test(width);
+  const dispatch = useDispatch();
+  const responseData = useSelector((state) => state.SignupSlice.dataSend);
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
 
-  const handleOtpSend = () => {
+  const handleOtpSend = (e) => {
     // Nothing for now
+    e.preventDefault();
+    const data = {
+      phone: mobile,
+    };
+    dispatch(sendSignup(data));
   };
   const varientProps = {
     variant: tabSmall ? "standard" : "outlined",
@@ -50,6 +60,16 @@ function DonorRegistration({ width }) {
     } else if (name === "password2") {
       setshowPassword2(!showPassword2);
     }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const data = {
+      hash: responseData.hash,
+      phone: responseData.phone,
+      otp: OTP,
+    };
+    dispatch(sendOTP(data));
   };
 
   const handleMouseDownPassword = (event) => {
@@ -68,7 +88,7 @@ function DonorRegistration({ width }) {
   const passwordProps1 = {
     id: "password",
     type: showPassword1 ? "text" : "password",
-    value: password,
+    dafaultValue: password,
     onChange: (prev) => setpassword(prev.target.value),
     endAdornment: (
       <InputAdornment position="end">
@@ -87,9 +107,11 @@ function DonorRegistration({ width }) {
   };
 
   const passwordProps2 = {
-    id: "verifyPassword",
+    id: "outlined-error-helper-text",
+    error: password != verifyPassword,
+    helperText: "Password isn't matching",
     type: showPassword2 ? "text" : "password",
-    value: verifyPassword,
+    dafaultValue: verifyPassword,
     onChange: (prev) => setverifyPassword(prev.target.value),
     endAdornment: (
       <InputAdornment position="end">
@@ -156,7 +178,14 @@ function DonorRegistration({ width }) {
             {DashboardRegistration.VOLUNTEER}
           </Typography>
 
-          <Paper elevation={12} className={styles.formBody} data-aos="fade-up">
+          <Paper
+            elevation={12}
+            component="form"
+            noValidate
+            autoComplete="off"
+            className={styles.formBody}
+            data-aos="fade-up"
+          >
             <FormControl style={{ width: "60%", marginTop: 20 }}>
               <Typography variant="subtitle1" className={styles.lableStyle}>
                 Mobile:<span style={{ color: "red" }}>*</span>
@@ -208,6 +237,7 @@ function DonorRegistration({ width }) {
                   scale: 1.2,
                   transition: { duration: 0.3 },
                 }}
+                onClick={handleOtpSend}
               >
                 Get OTP
               </Button>
@@ -247,6 +277,7 @@ function DonorRegistration({ width }) {
                 }}
                 style={{ fontSize: 12, marginTop: 10 }}
                 size="small"
+                onClick={handleSubmit}
               >
                 {DashboardRegistration.SUBMIT}
               </Button>
