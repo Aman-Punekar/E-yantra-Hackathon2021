@@ -52,4 +52,19 @@ export const useStyles = makeStyles((theme) => ({
     fontWeight: "500",
     borderRadius: 50,
   },
+  forgotPassword: {
+    textDecoration: "underline",
+    color: "blue",
+    textTransform: "capitalize",
+    " &:hover": {
+      background: "#fff",
+      textDecoration: "underline",
+    },
+    alignSelf: "flex-start",
+  },
+  forgotContainer: {
+    width: "100%",
+    height: "80vh",
+    marginTop: 75,
+  },
 }));

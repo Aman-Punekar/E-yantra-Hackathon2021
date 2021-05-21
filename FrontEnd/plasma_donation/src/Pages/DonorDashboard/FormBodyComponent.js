@@ -38,6 +38,7 @@ export const TextCommonField = (props) => {
         style: {
           fontFamily: "Roboto",
           fontWeight: "bold",
+          textTransform: "capitalize",
         },
       }}
       size="small"

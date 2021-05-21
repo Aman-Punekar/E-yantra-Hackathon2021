@@ -16,9 +16,10 @@ function App() {
   const DonorLogin = useSelector(
     (state) => state.SignupOTPSlice.signupSendStatus
   );
+  const LoginSlice = useSelector((state) => state.LoginSlice.loginStatus);
   return (
     <MuiThemeProvider theme={theme}>
-      {DonorLogin ? <DonorDashboard /> : <RootRouting />}
+      {DonorLogin || LoginSlice ? <DonorDashboard /> : <RootRouting />}
 
       {/* <VolunteerDashboard /> */}
     </MuiThemeProvider>

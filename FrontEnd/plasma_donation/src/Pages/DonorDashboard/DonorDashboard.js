@@ -28,6 +28,7 @@ import { MainWrapper, FormComp } from "./FormBodyComponent";
 import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import { useDispatch, useSelector } from "react-redux";
 import { donorForm } from "../../Redux/DonoInfoSubmitSlice";
+import { updateProfile } from "../../Redux/UpdateProfileSlice";
 
 const BootstrapInput = withStyles((theme) => ({
   root: {
@@ -57,33 +58,45 @@ const BootstrapInput = withStyles((theme) => ({
 function DonorDashboard({ width }) {
   const styles = useStyles();
   const dispatch = useDispatch();
-  const MobileNumber = useSelector(
-    (state) => state.SignupOTPSlice.shortData.phone
-  );
 
+  const LoginSlice = useSelector((state) => state.LoginSlice.user);
+  const MobileNumber = useSelector((state) => state.SignupOTPSlice.shortData);
   const [DonorInfo, setDonorInfo] = useState({
-    Name: "",
-    LastName: "",
-    Age: "",
-    District: "",
-    Email: "",
-    Mobile: MobileNumber,
-    AlternateMobile: "",
-    Lane: "",
-    City: "",
-    State: "",
-    ZipCode: "",
-    BloodGroup: "",
+    Name: LoginSlice !== null ? LoginSlice.firstName : "",
+    LastName: LoginSlice !== null ? LoginSlice.lastName : "",
+    Age: LoginSlice !== null ? LoginSlice.age : "",
+    District: LoginSlice !== null ? LoginSlice.address.district : "",
+    Mobile:
+      LoginSlice !== null
+        ? LoginSlice.mobileNo.toString()
+        : MobileNumber.phone.toString(),
+
+    Lane: LoginSlice !== null ? LoginSlice.address.lane : "",
+    City: LoginSlice !== null ? LoginSlice.address.city : "",
+    State: LoginSlice !== null ? LoginSlice.address.state : "",
+    ZipCode: LoginSlice !== null ? LoginSlice.address.pinCode.toString() : "",
+    BloodGroup: LoginSlice !== null ? LoginSlice.bloodGroup : "",
   });
-  const [Gender, setGender] = useState("female");
+  const [Gender, setGender] = useState(
+    LoginSlice !== null ? LoginSlice.gender : ""
+  );
   const [Terms, setTerms] = useState(false);
   const [isAvailable, setisAvailable] = useState(true);
+  const [AlternateMobile, setAlternateMobile] = useState(
+    LoginSlice !== null
+      ? LoginSlice.alternateNo === null
+        ? ""
+        : LoginSlice.alternateNo
+      : ""
+  );
 
   const xsValue = /xs/.test(width);
   const smValue = /sm/.test(width);
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
+    const hasMobileChanges =
+      LoginSlice.mobileNo.toString() !== DonorInfo.Mobile;
   }, []);
 
   const handleChangeEvents = (event) => {
@@ -92,28 +105,56 @@ function DonorDashboard({ width }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (DonorInfo.Name !== "") {
+    const {
+      Name,
+      LastName,
+      Age,
+      Mobile,
+      Lane,
+      City,
+      District,
+      State,
+      ZipCode,
+      BloodGroup,
+    } = DonorInfo;
+    function checkEmpty() {
+      for (var key in DonorInfo) {
+        if (DonorInfo[key] === "") {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    if (checkEmpty && Gender !== "") {
       const data = {
-        firstName: DonorInfo.Name,
-        lastName: DonorInfo.LastName,
-        age: DonorInfo.Age,
-        mobileNo: DonorInfo.Mobile,
-        alternateNo: parseInt(DonorInfo.AlternateMobile),
+        firstName: Name,
+        lastName: LastName,
+        age: Age,
+        mobileNo: parseInt(Mobile),
+        alternateNo: parseInt(AlternateMobile),
         gender: Gender,
         address: {
-          lane: DonorInfo.Lane,
-          city: DonorInfo.City,
-          district: DonorInfo.District,
-          state: DonorInfo.State,
-          pinCode: parseInt(DonorInfo.ZipCode),
+          lane: Lane,
+          city: City,
+          district: District,
+          state: State,
+          pinCode: parseInt(ZipCode),
         },
-        bloodGroup: DonorInfo.BloodGroup,
+        bloodGroup: BloodGroup,
         isAvailable: isAvailable,
       };
-      if (Terms) {
-        dispatch(donorForm(data));
+      if (LoginSlice !== null) {
+        const hasNoChanged =
+          LoginSlice.mobileNo.toString() !== DonorInfo.Mobile;
+        data.hasNoChanged = hasNoChanged;
+        dispatch(updateProfile(data));
       } else {
-        window.alert("Please accept our terms!!");
+        if (Terms) {
+          dispatch(donorForm(data));
+        } else {
+          window.alert("Please accept our terms!!");
+        }
       }
     } else {
       window.alert("Please enter all the Mandatory field!!");
@@ -252,20 +293,6 @@ function DonorDashboard({ width }) {
           <MainWrapper xsValue={xsValue} smValue={smValue}>
             <FormComp
               xs={10}
-              sm={8}
-              label="Email"
-              required={true}
-              inputProps={{
-                id: "Email",
-                placeholder: "abc@xyz.com",
-                value: DonorInfo.Email,
-                onchangeCall: handleChangeEvents,
-              }}
-            />
-          </MainWrapper>
-          <MainWrapper xsValue={xsValue} smValue={smValue}>
-            <FormComp
-              xs={10}
               sm={4}
               md={5}
               label="Mobile"
@@ -286,8 +313,8 @@ function DonorDashboard({ width }) {
               inputProps={{
                 id: "AlternateMobile",
                 placeholder: "+91 ...",
-                value: DonorInfo.AlternateMobile,
-                onchangeCall: handleChangeEvents,
+                value: AlternateMobile,
+                onchangeCall: (e) => setAlternateMobile(e.target.value),
               }}
             />
           </MainWrapper>
@@ -458,33 +485,35 @@ function DonorDashboard({ width }) {
               </FormControl>
             </Grid>
           </MainWrapper>
-          <MainWrapper xsValue={xsValue} smValue={smValue}>
-            <Grid
-              item
-              container
-              xs={10}
-              direction="row"
-              justify="space-between"
-              className={styles.formBodySection}
-            >
-              <div style={{ display: "flex", flexDirection: "row" }}>
-                <Checkbox
-                  checked={Terms}
-                  onChange={() => setTerms(!Terms)}
-                  inputProps={{ "aria-label": "checkbox" }}
-                />
-                <Typography
-                  variant="subtitle1"
-                  style={{ fontFamily: "Gotham" }}
-                >
-                  I declare that bla bla bla Laborum velit velit voluptate
-                  cillum labore mollit ullamco veniam laborum mollit commodo
-                  nulla nulla eu. Exercitation sint tempor enim occaecat ex duis
-                  pariatur qui laboris occaecat incididunt aute.
-                </Typography>
-              </div>
-            </Grid>
-          </MainWrapper>
+          {LoginSlice === null ? (
+            <MainWrapper xsValue={xsValue} smValue={smValue}>
+              <Grid
+                item
+                container
+                xs={10}
+                direction="row"
+                justify="space-between"
+                className={styles.formBodySection}
+              >
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <Checkbox
+                    checked={Terms}
+                    onChange={() => setTerms(!Terms)}
+                    inputProps={{ "aria-label": "checkbox" }}
+                  />
+                  <Typography
+                    variant="subtitle1"
+                    style={{ fontFamily: "Gotham" }}
+                  >
+                    I declare that bla bla bla Laborum velit velit voluptate
+                    cillum labore mollit ullamco veniam laborum mollit commodo
+                    nulla nulla eu. Exercitation sint tempor enim occaecat ex
+                    duis pariatur qui laboris occaecat incididunt aute.
+                  </Typography>
+                </div>
+              </Grid>
+            </MainWrapper>
+          ) : null}
           <MainWrapper xsValue={xsValue} smValue={smValue}>
             <Grid
               item

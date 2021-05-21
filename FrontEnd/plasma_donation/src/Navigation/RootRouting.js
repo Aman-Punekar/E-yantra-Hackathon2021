@@ -5,6 +5,7 @@ import Header from "../Pages/Header/Header";
 import LandingPage from "../Pages/LandingPage/LandingPage";
 import Footer from "../Pages/Footer/Footer";
 import LoginPage from "../Pages/LoginPage/LoginPage";
+import ForgotPassowrd from "../Pages/ForgotPassword/ForgotPassowrd";
 
 function RootRouting(props) {
   return (
@@ -14,6 +15,7 @@ function RootRouting(props) {
         <Route exact path="/" component={LandingPage} />
         <Route path="/RegisterDonor" component={DonorRegistration} />
         <Route path="/Login" component={LoginPage} />
+        <Route path="/ForgotPassword" component={ForgotPassowrd} />
       </Switch>
       <Footer />
     </Router>

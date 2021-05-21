@@ -22,6 +22,7 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import { LoginPageData } from "../../constants/stringConstants";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../../Redux/LoginSlice";
+import { useHistory } from "react-router-dom";
 
 function LoginPage({ width }) {
   const styles = useStyles();
@@ -30,11 +31,16 @@ function LoginPage({ width }) {
   const [showPassword, setshowPassword] = useState(false);
   const dispatch = useDispatch();
   const tabSmall = /xs|sm/.test(width);
+  const history = useHistory();
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
 
+  const handleForgotPassword = (e) => {
+    e.preventDefault();
+    history.push("/ForgotPassword");
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -145,6 +151,20 @@ function LoginPage({ width }) {
                 {...passwordProps}
               />
             )}
+          </FormControl>
+          <FormControl style={{ width: "60%", marginTop: 10 }}>
+            <Button
+              variant="text"
+              component={motion.a}
+              whileHover={{
+                scale: 1.2,
+                transition: { duration: 0.3 },
+              }}
+              className={styles.forgotPassword}
+              onClick={handleForgotPassword}
+            >
+              Forgot Password?
+            </Button>
           </FormControl>
           <FormControl style={{ width: "60%", marginTop: 30 }}>
             <Button

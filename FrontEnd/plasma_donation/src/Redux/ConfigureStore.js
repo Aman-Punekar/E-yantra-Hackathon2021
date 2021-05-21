@@ -10,6 +10,8 @@ import SignupOTPSlice from "./OtpSendSlice";
 import DonorInfo from "./DonoInfoSubmitSlice";
 import LoginSlice from "./LoginSlice";
 import DonorInfoList from "./DonorListSlice";
+import ProfileUpdate from "./UpdateProfileSlice";
+import GenPassword from "./ForgetPasswordSlice";
 
 const reducer = combineReducers({
   SignupSlice,
@@ -17,6 +19,8 @@ const reducer = combineReducers({
   DonorInfo,
   LoginSlice,
   DonorInfoList,
+  ProfileUpdate,
+  GenPassword,
 });
 
 const store = configureStore({
