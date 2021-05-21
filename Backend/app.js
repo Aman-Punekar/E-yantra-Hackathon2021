@@ -29,7 +29,15 @@ const visitor = require("./routes/visitor");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+<<<<<<< Updated upstream
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+=======
+app.use(cors({ origin: "http://localhost:8000", credentials: true }));
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+});
+>>>>>>> Stashed changes
 
 app.use("/api/donor", donorInfo);
 app.use("/api/auth", auth);

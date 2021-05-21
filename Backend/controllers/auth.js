@@ -2,15 +2,29 @@ require("dotenv").config();
 const crypto = require("crypto"); // for encryption
 const jwt = require("jsonwebtoken"); // issuing jwts
 const donorCredentials = require("../models/donorCredentials");
+<<<<<<< Updated upstream
 const { genPasswordHash, validPassword } = require("../lib/utils");
 const ACCOUNT_SID = "ACe76bd995e206ab993cdbe06d22004e73";
 const AUTH_TOKEN = "796ec1d88e088c5e177594f5e73ba789";
 const client = require("twilio")(ACCOUNT_SID, AUTH_TOKEN); // configuring twilio
+=======
+const {
+  genPasswordHash,
+  validPassword,
+  genAndSendOtp,
+  getUser,
+  deleteForgottenPassword,
+} = require("../lib/utils");
+const { send } = require("process");
+>>>>>>> Stashed changes
 
 // environment variables
 const JWT_AUTH_TOKEN = process.env.JWT_AUTH_TOKEN;
-const JWT_REFRESH_TOKEN = process.env.JWT_REFRESH_TOKEN;
 const smsKey = process.env.SMS_SECRET_KEY;
+<<<<<<< Updated upstream
+=======
+const JWT_REFRESH_TOKEN = process.env.JWT_REFRESH_TOKEN;
+>>>>>>> Stashed changes
 
 /*
 '/sendOTP' route: 
@@ -22,6 +36,7 @@ appended creating fullhash.
 
 */
 const sendOtp = (req, res) => {
+<<<<<<< Updated upstream
   // const phoneTwilio = req.body.phone.toString() + '+91';
   const phone = req.body.phone;
   const otp = Math.floor(100000 + Math.random() * 900000); // generating otp
@@ -47,6 +62,10 @@ const sendOtp = (req, res) => {
     hash: fullhash,
     otp,
   });
+=======
+  console.log(req.body.phone);
+  res.status(200).send(genAndSendOtp(req.body.phone));
+>>>>>>> Stashed changes
 };
 
 /*
@@ -62,6 +81,7 @@ for other routes. Along with accessToken, refreshToken is also sent for keeping 
 Otherwise 400 status is sent stating that otp is incorrect    
 
 */
+<<<<<<< Updated upstream
 const verifyOtp = (req, res) => {
   const phone = req.body.phone;
   const hash = req.body.hash;
@@ -122,6 +142,82 @@ const donorLogin = (req, res) => {
   donorCredentials
     .findOne({ mobileNo: req.body.phone })
     .then((user) => {
+=======
+const verifyOtp = async (req, res) => {
+  try {
+    const phone = req.body.phone;
+    const hash = req.body.hash;
+    const otp = req.body.otp;
+    let [hashValue, expires] = hash.split(".");
+
+    let now = Date.now();
+
+    if (now > parseInt(expires)) {
+      return res.status(504).send({
+        msg: "timeout please try again",
+      });
+    }
+    const data = `${phone}.${otp}.${expires}`;
+    const newCalculatedHash = crypto
+      .createHmac("sha256", smsKey)
+      .update(data)
+      .digest("hex");
+
+    if (newCalculatedHash === hashValue) {
+      let n = await deleteForgottenPassword(phone);
+
+      if (n !== 0) {
+        genPasswordHash(req.body.password, phone);
+        res.status(201).send({ msg: "Otp changed successfully" });
+      }
+
+      genPasswordHash(req.body.password, phone);
+
+      const accessToken = jwt.sign(
+        {
+          data: phone,
+        },
+        JWT_AUTH_TOKEN,
+        {
+          expiresIn: "1d",
+        }
+      );
+
+      res
+        .status(202)
+        .cookie("accessToken", accessToken, {
+          expires: new Date(new Date().getTime() + 86400 * 1000),
+          sameSite: "strict",
+          httpOnly: true,
+        })
+
+        .cookie("authSession", true, {
+          expires: new Date(new Date().getTime() + 86400 * 1000),
+          sameSite: "strict",
+        })
+
+        .send({
+          msg: "Device verified",
+          phone,
+        });
+    } else {
+      return res.status(400).send({
+        verification: false,
+        msg: "Incorrect OTP",
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ msg: err });
+  }
+};
+
+const donorLogin = async (req, res) => {
+  try {
+    const user = await donorCredentials.findOne({ mobileNo: req.body.phone });
+
+    if (!user)
+>>>>>>> Stashed changes
       if (!user) {
         return res.status(401).json({
           success: false,
@@ -129,6 +225,7 @@ const donorLogin = (req, res) => {
         });
       }
 
+<<<<<<< Updated upstream
       // Function defined at bottom of app.js
       const isValid = validPassword(req.body.password, user.hash, user.salt);
 
@@ -162,6 +259,59 @@ const donorLogin = (req, res) => {
     })
     .catch((err) => {
       res.status(400).send({ err: err });
+=======
+    // If async, then add await
+    const isValid = validPassword(req.body.password, user.hash, user.salt);
+
+    if (isValid) {
+      const accessToken = jwt.sign(
+        {
+          mobileNo: user.mobileNo,
+        },
+        JWT_AUTH_TOKEN,
+        {
+          expiresIn: "1d",
+        }
+      );
+
+      res
+        .status(200)
+        .cookie("accessToken", accessToken, {
+          expires: new Date(new Date().getTime() + 86400 * 1000),
+          sameSite: "strict",
+          httpOnly: true,
+        })
+
+        .cookie("authSession", true, {
+          expires: new Date(new Date().getTime() + 86400 * 1000),
+          sameSite: "strict",
+        })
+        .json(await getUser(req.body.phone));
+    } else {
+      res.status(401).json({ success: false, msg: "Wrong Password" });
+    }
+  } catch (e) {
+    res.status(400).send({ err: e });
+  }
+};
+
+const updatePasswordSendOtp = (req, res) => {
+  const phone = req.body.phone;
+
+  donorCredentials
+    .find({ mobileNo: phone })
+    .then((result) => {
+      console.log(`in updatePasswordSendOtp ${result}`);
+      if (result.length !== 0) {
+        res.status(200).send(genAndSendOtp(phone));
+      } else {
+        res.status(400).send({ msg: `No account with mobile number ${phone}` });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send(err);
+>>>>>>> Stashed changes
     });
 };
 
@@ -182,4 +332,8 @@ module.exports = {
   verifyOtp,
   donorLogin,
   logout,
+<<<<<<< Updated upstream
+=======
+  updatePasswordSendOtp,
+>>>>>>> Stashed changes
 };

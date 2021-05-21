@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const {donorQuerry} = require('../controllers/visitor');
+const { donorQuerry } = require("../controllers/visitor");
 
-router.get('/visitorQerryOfDonor',donorQuerry);
+router.post("/visitorQerryOfDonor", donorQuerry);
 
 module.exports = router;
