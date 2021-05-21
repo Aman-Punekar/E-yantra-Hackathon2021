@@ -1,23 +1,22 @@
-// Controllers require only the model
 const Donor = require("../models/Donor");
 
 const addDonorInfo = (req, res) => {
   const newUser = new Donor({
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
+    firstName: req.body.firstName.toLowerCase(),
+    lastName: req.body.lastName.toLowerCase(),
     age: req.body.age,
-    gender: req.body.gender,
+    gender: req.body.gender.toLowerCase(),
     mobileNo: req.body.mobileNo,
     alternateNo: req.body.alternateNo,
     address: {
-      lane: req.body.address.lane,
-      city: req.body.address.city,
-      district: req.body.address.district,
-      state: req.body.address.state,
+      lane: req.body.address.lane.toLowerCase(),
+      city: req.body.address.city.toLowerCase(),
+      district: req.body.address.district.toLowerCase(),
+      state: req.body.address.state.toLowerCase(),
       pinCode: req.body.address.pinCode,
     },
 
-    bloodGroup: req.body.bloodGroup,
+    bloodGroup: req.body.bloodGroup.toLowerCase(),
     isAvailable: true,
   });
 
@@ -39,7 +38,22 @@ const updateDonorInfo = (req, res) => {
   Donor.updateOne(
     { mobileNo: req.uniqueMobileNo },
     {
-      $set: req.body,
+      firstName: req.body.firstName.toLowerCase(),
+      lastName: req.body.lastName.toLowerCase(),
+      age: req.body.age,
+      gender: req.body.gender.toLowerCase(),
+      mobileNo: req.body.mobileNo,
+      alternateNo: req.body.alternateNo,
+      address: {
+        lane: req.body.address.lane.toLowerCase(),
+        city: req.body.address.city.toLowerCase(),
+        district: req.body.address.district.toLowerCase(),
+        state: req.body.address.state.toLowerCase(),
+        pinCode: req.body.address.pinCode,
+      },
+
+      bloodGroup: req.body.bloodGroup.toLowerCase(),
+      isAvailable: req.body.isAvailable,
     }
   )
     .then((user) => {

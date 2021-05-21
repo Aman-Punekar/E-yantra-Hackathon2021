@@ -5,13 +5,13 @@ const donorQuerry = (req, res) => {
     {
       $and: [
         { 
-          city: req.body.city 
+          "address.city": req.body.city.toLowerCase() 
         },
         {
           isAvailable: true,
         },
         {
-          bloodGroup: req.body.bloodGroup,
+          bloodGroup: req.body.bloodGroup.toLowerCase() 
         }
       ],
     },
