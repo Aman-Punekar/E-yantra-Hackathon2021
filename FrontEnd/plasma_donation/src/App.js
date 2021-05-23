@@ -1,26 +1,28 @@
 import React from "react";
-import "./App.css";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { TransitionGroup, CSSTransition } from "react-transition-group";
-import Dashboard from "./pages/Dashboard/Dashboard";
-import DonarRegistration from "./pages/DonarRegistration/DonarRegistration";
+import {
+  unstable_createMuiStrictModeTheme as createMuiTheme,
+  responsiveFontSizes,
+} from "@material-ui/core/styles";
+import { MuiThemeProvider } from "@material-ui/core";
+import RootRouting from "./Navigation/RootRouting";
+import DonorDashboard from "./Pages/DonorDashboard/DonorDashboard";
+import VolunteerDashboard from "./Pages/VolunteerDashboard/VolunteerDashboard";
+import { useSelector } from "react-redux";
+
+let theme = createMuiTheme();
+theme = responsiveFontSizes(theme);
 
 function App() {
+  const DonorLogin = useSelector(
+    (state) => state.SignupOTPSlice.signupSendStatus
+  );
+  const LoginSlice = useSelector((state) => state.LoginSlice.loginStatus);
   return (
-    <Router>
-      {/* <TransitionGroup>
-        <CSSTransition timeout={250} classNames="fade"> */}
-      <Switch>
-        <Route exact path="/">
-          <Dashboard />
-        </Route>
-        <Route path="/donorRegistration">
-          <DonarRegistration />
-        </Route>
-      </Switch>
-      {/* </CSSTransition>
-      </TransitionGroup> */}
-    </Router>
+    <MuiThemeProvider theme={theme}>
+      {DonorLogin || LoginSlice ? <DonorDashboard /> : <RootRouting />}
+
+      {/* <VolunteerDashboard /> */}
+    </MuiThemeProvider>
   );
 }
 
