@@ -395,7 +395,14 @@ function LandingPage({ width }) {
                 elevation={12}
                 className={styles.extraCards}
                 style={{ background: "linear-gradient(#F1A9F9,#9169FF)" }}
-              ></Paper>
+              >
+                <Typography
+                  variant="h6"
+                  style={{ fontFamily: "Gotham Black", margin: 10 }}
+                >
+                  Who can donate?
+                </Typography>
+              </Paper>
             </Grid>
             <Grid
               item
@@ -409,7 +416,14 @@ function LandingPage({ width }) {
                 elevation={12}
                 className={styles.extraCards}
                 style={{ background: "linear-gradient(#66CCBE,#476BD1)" }}
-              ></Paper>
+              >
+                <Typography
+                  variant="h6"
+                  style={{ fontFamily: "Gotham Black", margin: 10 }}
+                >
+                  Who can donate?
+                </Typography>
+              </Paper>
             </Grid>
           </Grid>
           <Grid
@@ -432,7 +446,14 @@ function LandingPage({ width }) {
                 elevation={12}
                 className={styles.extraCards}
                 style={{ background: "linear-gradient(#826CDB,#EA3FB1)" }}
-              ></Paper>
+              >
+                <Typography
+                  variant="h6"
+                  style={{ fontFamily: "Gotham Black", margin: 10 }}
+                >
+                  Who can donate?
+                </Typography>
+              </Paper>
             </Grid>
             <Grid
               item
@@ -446,7 +467,14 @@ function LandingPage({ width }) {
                 elevation={12}
                 className={styles.extraCards}
                 style={{ background: "linear-gradient(#C8F6B9,#0BA5AA)" }}
-              ></Paper>
+              >
+                <Typography
+                  variant="h6"
+                  style={{ fontFamily: "Gotham Black", margin: 10 }}
+                >
+                  Who can donate?
+                </Typography>
+              </Paper>
             </Grid>
           </Grid>
         </Grid>

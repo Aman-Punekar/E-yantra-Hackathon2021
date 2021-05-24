@@ -138,9 +138,9 @@ const donorLogin = async (req, res) => {
       );
 
       var result = await getUser(req.body.phone);
-      if(result.length === 0){
+      if (result === null) {
         returnResponse = { msg: "Success", phone: req.body.phone };
-      }else{
+      } else {
         returnResponse = { msg: "Success", phone: null };
       }
 
@@ -161,6 +161,7 @@ const donorLogin = async (req, res) => {
       res.status(401).json({ success: false, msg: "Wrong Password" });
     }
   } catch (e) {
+    console.log(e);
     res.status(400).send({ err: e });
   }
 };

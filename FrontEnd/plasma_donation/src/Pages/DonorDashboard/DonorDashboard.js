@@ -16,6 +16,8 @@ import {
   Checkbox,
   Button,
   withWidth,
+  Modal,
+  Box,
 } from "@material-ui/core";
 import { useStyles } from "./donorDashboardStyles";
 import Avatar from "../../assets/json/Avatar.json";
@@ -29,6 +31,18 @@ import { updateProfile } from "../../Redux/UpdateProfileSlice";
 import { getUser } from "../../Redux/FetchUser";
 import Loading from "../Loading/Loading";
 import Lottie from "lottie-react";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 const BootstrapInput = withStyles((theme) => ({
   root: {
@@ -58,16 +72,23 @@ const BootstrapInput = withStyles((theme) => ({
 function DonorDashboard({ width }) {
   const styles = useStyles();
   const dispatch = useDispatch();
-
+  const [open, setopen] = useState(false);
   const FetchUser = useSelector((state) => state.FetchUser.user);
   const MobileNumber = useSelector((state) => state.SignupOTPSlice.shortData);
   const SigninStatus = useSelector((state) => state.DonorInfo.signupSendStatus);
+  const LoginMsg = useSelector((state) => state.LoginSlice.user);
+
   const [DonorInfo, setDonorInfo] = useState({
     Name: "",
     LastName: "",
     Age: "",
     District: "",
-    Mobile: MobileNumber !== null ? MobileNumber.phone.toString() : "",
+    Mobile:
+      MobileNumber !== null
+        ? MobileNumber.phone.toString()
+        : LoginMsg.phone !== null
+        ? LoginMsg.phone.toString()
+        : "",
     Lane: "",
     City: "",
     State: "",
@@ -84,7 +105,7 @@ function DonorDashboard({ width }) {
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
-    if (MobileNumber === null) {
+    if (MobileNumber === null && LoginMsg.phone === null) {
       dispatch(getUser());
     }
   }, []);
@@ -96,7 +117,7 @@ function DonorDashboard({ width }) {
   }, [SigninStatus]);
 
   useEffect(() => {
-    if (FetchUser !== null || FetchUser !== "") {
+    if (FetchUser !== null && FetchUser !== "") {
       setDonorInfo({
         Name: FetchUser.firstName,
         LastName: FetchUser.lastName,
@@ -167,7 +188,7 @@ function DonorDashboard({ width }) {
         bloodGroup: BloodGroup,
         isAvailable: isAvailable,
       };
-      if (FetchUser !== null || FetchUser !== "") {
+      if (FetchUser !== null && FetchUser !== "") {
         dispatch(updateProfile(data));
       } else {
         if (Terms) {
@@ -503,10 +524,9 @@ function DonorDashboard({ width }) {
                     variant="subtitle1"
                     style={{ fontFamily: "Gotham" }}
                   >
-                    I declare that bla bla bla Laborum velit velit voluptate
-                    cillum labore mollit ullamco veniam laborum mollit commodo
-                    nulla nulla eu. Exercitation sint tempor enim occaecat ex
-                    duis pariatur qui laboris occaecat incididunt aute.
+                    I declare that the given information is correct and i
+                    eligible for donation and my information can be presented in
+                    public domain for the welfare of the society.
                   </Typography>
                 </div>
               </Grid>

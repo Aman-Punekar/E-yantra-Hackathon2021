@@ -41,7 +41,7 @@ function Footer() {
           <Typography component="div" className={styles.logoContainerFooter}>
             <Lottie animationData={BloodBag} className={styles.logoAnimation} />
             <Typography variant="h5" className={styles.logoText}>
-              Plasma Donation
+              RudhiraBindu
             </Typography>
           </Typography>
           <Typography variant="subtitle2" className={styles.subContextFooter}>

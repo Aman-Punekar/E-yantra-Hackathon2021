@@ -11,6 +11,8 @@ import {
   IconButton,
   OutlinedInput,
   Input,
+  Modal,
+  Box,
 } from "@material-ui/core";
 import { useStyles } from "../DonorRegistration/donorRegistrationStyle";
 import Lottie from "lottie-react";
@@ -34,6 +36,7 @@ function LoginPage({ width }) {
   const tabSmall = /xs|sm/.test(width);
   const history = useHistory();
   const LoginSlice = useSelector((state) => state.LoginSlice.loginStatus);
+  const [open, setopen] = useState(false);
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
@@ -45,16 +48,17 @@ function LoginPage({ width }) {
     }
   }, [LoginSlice]);
 
-  const handleForgotPassword = (e) => {
-    e.preventDefault();
+  const handleClose = () => {
+    setopen(false);
+  };
+
+  const handleForgotPassword = () => {
     history.push("/ForgotPassword");
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
+  const handleSubmit = () => {
     if (mobile === "" || password === "") {
-      window.alert("Please enter the credentials!!");
+      setopen(true);
     } else {
       const data = {
         phone: parseInt(mobile),

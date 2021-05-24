@@ -133,10 +133,12 @@ function Header({ width }) {
         <Toolbar className={styles.toobarStyle}>
           <Typography component="div" className={styles.logoContainer}>
             <Lottie animationData={BloodBag} className={styles.logoAnimation} />
+
             <Typography variant="h4" className={styles.logoText}>
-              Plasma Donation
+              RudhiraBindu
             </Typography>
           </Typography>
+
           {DonorLogin || LoginSlice ? (
             <Button
               component={motion.a}
