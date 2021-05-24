@@ -12,8 +12,7 @@ import {
   withStyles,
   InputBase,
   FormControl,
-  FormHelperText,
-  FormLabel,
+  CircularProgress,
 } from "@material-ui/core";
 import Lottie from "lottie-react";
 import DocFrontLine from "../../assets/json/DocsFrontLine.json";
@@ -33,7 +32,6 @@ import classes from "./App.module.css";
 import { LandingPageContent } from "../../constants/stringConstants";
 import { useDispatch, useSelector } from "react-redux";
 import { donorList } from "../../Redux/DonorListSlice";
-import DonorInfo from "../../Redux/DonoInfoSubmitSlice";
 
 const BootstrapInput = withStyles((theme) => ({
   root: {
@@ -73,11 +71,14 @@ function LandingPage({ width }) {
   const [ZipCode, setZipCode] = useState("");
   const [City, setCity] = useState("");
   const [Choose, setChoose] = useState("");
+
   const dispatch = useDispatch();
   const DonorsList = useSelector((state) => state.DonorInfoList.donorList);
+  const DonorsListLoading = useSelector(
+    (state) => state.DonorInfoList.isLoading
+  );
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     const data = {
       bloodGroup: BloodGroup,
       city: City,
@@ -120,6 +121,7 @@ function LandingPage({ width }) {
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
+    handleSubmit();
   }, []);
 
   const RegButton = React.forwardRef((props, ref) => (
@@ -231,9 +233,14 @@ function LandingPage({ width }) {
                 }}
               >
                 <option aria-label="None" value="" />
-                <option value="B+">B+</option>
-                <option value="A+">A+</option>
                 <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
               </NativeSelect>
             </FormControl>
           </Grid>
@@ -293,18 +300,22 @@ function LandingPage({ width }) {
             justify="center"
           >
             <FormControl style={{ width: "80%", marginTop: 30 }}>
-              <Button
-                variant="outlined"
-                className={styles.submitButon}
-                component={motion.a}
-                whileHover={{
-                  scale: 1.2,
-                  transition: { duration: 0.3 },
-                }}
-                onClick={handleSubmit}
-              >
-                Check
-              </Button>
+              {DonorsListLoading ? (
+                <CircularProgress style={{ alignSelf: "center" }} />
+              ) : (
+                <Button
+                  variant="outlined"
+                  className={styles.submitButon}
+                  component={motion.a}
+                  whileHover={{
+                    scale: 1.2,
+                    transition: { duration: 0.3 },
+                  }}
+                  onClick={handleSubmit}
+                >
+                  Check
+                </Button>
+              )}
             </FormControl>
           </Grid>
         </Grid>
@@ -334,10 +345,24 @@ function LandingPage({ width }) {
                     ...style,
                     background: item.css,
                     height: 100,
+                    borderRadius: 20,
                   }}
                 >
-                  <Typography variant="h5" style={{ textAlign: "center" }}>
-                    {item.firstName}
+                  <Typography
+                    variant="subtitle1"
+                    className={styles.infoCardName}
+                  >
+                    Name:
+                    <span style={{ color: "green" }}>
+                      {item.firstName} {item.lastName}
+                    </span>
+                  </Typography>
+                  <Typography
+                    variant="subtitle1"
+                    className={styles.infoCardName}
+                  >
+                    Mobile No.:
+                    <span style={{ color: "orange" }}>{item.mobileNo}</span>
                   </Typography>
                 </Paper>
               ))}

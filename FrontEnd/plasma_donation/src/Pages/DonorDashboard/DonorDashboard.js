@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Avatar,
   Grid,
   Typography,
   IconButton,
@@ -19,9 +18,7 @@ import {
   withWidth,
 } from "@material-ui/core";
 import { useStyles } from "./donorDashboardStyles";
-import DashboardHeader from "../DashboardHeaders/DashboardHeader";
-import profileImage from "../../assets/image/profileImage.jpg";
-import EditRoundedIcon from "@material-ui/icons/EditRounded";
+import Avatar from "../../assets/json/Avatar.json";
 import Aos from "aos";
 import { motion } from "framer-motion";
 import { MainWrapper, FormComp } from "./FormBodyComponent";
@@ -29,6 +26,9 @@ import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import { useDispatch, useSelector } from "react-redux";
 import { donorForm } from "../../Redux/DonoInfoSubmitSlice";
 import { updateProfile } from "../../Redux/UpdateProfileSlice";
+import { getUser } from "../../Redux/FetchUser";
+import Loading from "../Loading/Loading";
+import Lottie from "lottie-react";
 
 const BootstrapInput = withStyles((theme) => ({
   root: {
@@ -59,45 +59,59 @@ function DonorDashboard({ width }) {
   const styles = useStyles();
   const dispatch = useDispatch();
 
-  const LoginSlice = useSelector((state) => state.LoginSlice.user);
+  const FetchUser = useSelector((state) => state.FetchUser.user);
   const MobileNumber = useSelector((state) => state.SignupOTPSlice.shortData);
   const [DonorInfo, setDonorInfo] = useState({
-    Name: LoginSlice !== null ? LoginSlice.firstName : "",
-    LastName: LoginSlice !== null ? LoginSlice.lastName : "",
-    Age: LoginSlice !== null ? LoginSlice.age : "",
-    District: LoginSlice !== null ? LoginSlice.address.district : "",
-    Mobile:
-      LoginSlice !== null
-        ? LoginSlice.mobileNo.toString()
-        : MobileNumber.phone.toString(),
-
-    Lane: LoginSlice !== null ? LoginSlice.address.lane : "",
-    City: LoginSlice !== null ? LoginSlice.address.city : "",
-    State: LoginSlice !== null ? LoginSlice.address.state : "",
-    ZipCode: LoginSlice !== null ? LoginSlice.address.pinCode.toString() : "",
-    BloodGroup: LoginSlice !== null ? LoginSlice.bloodGroup : "",
+    Name: "",
+    LastName: "",
+    Age: "",
+    District: "",
+    Mobile: MobileNumber !== null ? MobileNumber.phone.toString() : "",
+    Lane: "",
+    City: "",
+    State: "",
+    ZipCode: "",
+    BloodGroup: "",
   });
-  const [Gender, setGender] = useState(
-    LoginSlice !== null ? LoginSlice.gender : ""
-  );
+  const [Gender, setGender] = useState("");
   const [Terms, setTerms] = useState(false);
   const [isAvailable, setisAvailable] = useState(true);
-  const [AlternateMobile, setAlternateMobile] = useState(
-    LoginSlice !== null
-      ? LoginSlice.alternateNo === null
-        ? ""
-        : LoginSlice.alternateNo
-      : ""
-  );
+  const [AlternateMobile, setAlternateMobile] = useState("");
 
   const xsValue = /xs/.test(width);
   const smValue = /sm/.test(width);
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
-    const hasMobileChanges =
-      LoginSlice.mobileNo.toString() !== DonorInfo.Mobile;
+    dispatch(getUser());
   }, []);
+
+  useEffect(() => {
+    if (FetchUser !== null) {
+      setDonorInfo({
+        Name: FetchUser.firstName,
+        LastName: FetchUser.lastName,
+        Age: FetchUser.age,
+        District: FetchUser.address.district,
+        Mobile: FetchUser.mobileNo.toString(),
+        Lane: FetchUser.address.lane,
+        City: FetchUser.address.city,
+        State: FetchUser.address.state,
+        ZipCode: FetchUser.address.pinCode.toString(),
+        BloodGroup: FetchUser.bloodGroup,
+      });
+      setGender(FetchUser.gender);
+      setAlternateMobile(
+        FetchUser.alternateNo === null ? "" : FetchUser.alternateNo
+      );
+    }
+  }, [FetchUser]);
+
+  const isLoading = useSelector((state) => state.FetchUser.isLoading);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   const handleChangeEvents = (event) => {
     setDonorInfo({ ...DonorInfo, [event.target.id]: event.target.value });
@@ -144,9 +158,8 @@ function DonorDashboard({ width }) {
         bloodGroup: BloodGroup,
         isAvailable: isAvailable,
       };
-      if (LoginSlice !== null) {
-        const hasNoChanged =
-          LoginSlice.mobileNo.toString() !== DonorInfo.Mobile;
+      if (FetchUser !== null) {
+        const hasNoChanged = FetchUser.mobileNo.toString() !== DonorInfo.Mobile;
         data.hasNoChanged = hasNoChanged;
         dispatch(updateProfile(data));
       } else {
@@ -163,7 +176,6 @@ function DonorDashboard({ width }) {
 
   return (
     <>
-      <DashboardHeader />
       <Grid
         container
         direction="column"
@@ -176,30 +188,7 @@ function DonorDashboard({ width }) {
           className={styles.profilePicContainer}
           data-aos="fade-down"
         >
-          <Avatar
-            alt="his name"
-            src={profileImage}
-            className={styles.profileImage}
-          />
-          <input
-            accept="image/*"
-            className={styles.input}
-            id="contained-button-file"
-            multiple
-            type="file"
-          />
-          <label
-            htmlFor="contained-button-file"
-            className={styles.iconLableStyle}
-          >
-            <IconButton
-              aria-label="edit"
-              className={styles.editButton}
-              component="span"
-            >
-              <EditRoundedIcon />
-            </IconButton>
-          </label>
+          <Lottie animationData={Avatar} className={styles.profileImage} />
         </Typography>
         <Container
           maxWidth="md"
@@ -447,9 +436,14 @@ function DonorDashboard({ width }) {
                   }}
                 >
                   <option aria-label="None" value="" />
-                  <option value="B+">B+</option>
-                  <option value="A+">A+</option>
                   <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
                 </NativeSelect>
               </FormControl>
             </Grid>
@@ -485,7 +479,7 @@ function DonorDashboard({ width }) {
               </FormControl>
             </Grid>
           </MainWrapper>
-          {LoginSlice === null ? (
+          {FetchUser === null ? (
             <MainWrapper xsValue={xsValue} smValue={smValue}>
               <Grid
                 item

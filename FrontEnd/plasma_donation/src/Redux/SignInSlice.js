@@ -18,6 +18,7 @@ const signupSlice = createSlice({
     error: "",
     message: "",
     isLoading: false,
+    response: false,
     dataSend: null,
   },
   reducers: {},
@@ -31,7 +32,7 @@ const signupSlice = createSlice({
     },
     [sendSignup.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.signupSendStatus = true;
+      state.response = true;
       state.dataSend = action.payload;
     },
   },

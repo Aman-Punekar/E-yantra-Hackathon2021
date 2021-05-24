@@ -15,17 +15,24 @@ import Lottie from "lottie-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Aos from "aos";
+import { useSelector, useDispatch } from "react-redux";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
 import InfoRoundedIcon from "@material-ui/icons/InfoRounded";
 import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
 import ExitToAppRoundedIcon from "@material-ui/icons/ExitToAppRounded";
 import PersonAddRoundedIcon from "@material-ui/icons/PersonAddRounded";
+import { logout } from "../../Redux/LoginSlice";
 
 function Header({ width }) {
   const styles = useStyles();
   const [drawer, setDrawer] = useState(false);
   const drawerRef = createRef();
   const lapDrawer = /md|lg|xl/.test(width);
+  const dispatch = useDispatch();
+  const DonorLogin = useSelector(
+    (state) => state.SignupOTPSlice.signupSendStatus
+  );
+  const LoginSlice = useSelector((state) => state.LoginSlice.loginStatus);
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
@@ -36,6 +43,11 @@ function Header({ width }) {
       setDrawer(false);
     }
   }, [lapDrawer]);
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    dispatch(logout());
+  };
 
   const HomeButton = React.forwardRef((props, ref) => (
     <Button
@@ -126,70 +138,75 @@ function Header({ width }) {
               Plasma Donation
             </Typography>
           </Typography>
-          <Typography component="div" className={styles.buttonContainer}>
-            <div className={styles.routeButtons}>
-              <Link to="/" component={HomeButton} />
-              <Link to="/About" component={AboutButton} />
-              <Link to="/Contact" component={ContactButton} />
-            </div>
-            <div className={styles.authButtonContainer}>
-              <Link to="/Login" component={LoginButton} />
-              <Link
-                to="/RegisterDonor"
-                variant="contained"
-                component={SignupButton}
-                style={{
-                  background: "#0900ad",
-                  color: "#fff",
-                }}
-              />
-            </div>
-
-            <IconButton
-              onClick={() => setDrawer(!drawer)}
-              className={styles.burgerMenu}
-            >
-              <MenuRoundedIcon style={{ color: "#000" }} />
-            </IconButton>
-            <Drawer
-              ref={drawerRef}
-              anchor="right"
-              open={drawer}
-              onClose={() => setDrawer(!drawer)}
-              className={styles.drawerStyle}
-              classes={{
-                paper: styles.drawerPaper,
+          {DonorLogin || LoginSlice ? (
+            <Button
+              component={motion.a}
+              className={styles.authButtons}
+              whileHover={{
+                scale: 1.2,
+                transition: { duration: 0.3 },
               }}
+              style={{ color: "#0d3dff" }}
+              onClick={handleLogout}
             >
-              <div className={styles.drawerButtonContainer}>
-                <Link
-                  to="/"
-                  component={HomeButton}
-                  startIcon={<HomeRoundedIcon />}
-                />
-                <Link
-                  to="/About"
-                  component={AboutButton}
-                  startIcon={<InfoRoundedIcon />}
-                />
-                <Link
-                  to="/Contact"
-                  component={ContactButton}
-                  startIcon={<PermContactCalendarRoundedIcon />}
-                />
-                <Link
-                  to="/Login"
-                  component={LoginButton}
-                  startIcon={<ExitToAppRoundedIcon />}
-                />
+              Logout
+            </Button>
+          ) : (
+            <Typography component="div" className={styles.buttonContainer}>
+              <div className={styles.routeButtons}>
+                <Link to="/" component={HomeButton} />
+              </div>
+              <div className={styles.authButtonContainer}>
+                <Link to="/Login" component={LoginButton} />
+              </div>
+              <div className={styles.authButtonContainer}>
                 <Link
                   to="/RegisterDonor"
+                  variant="contained"
                   component={SignupButton}
-                  startIcon={<PersonAddRoundedIcon />}
+                  style={{
+                    background: "#0900ad",
+                    color: "#fff",
+                  }}
                 />
               </div>
-            </Drawer>
-          </Typography>
+
+              <IconButton
+                onClick={() => setDrawer(!drawer)}
+                className={styles.burgerMenu}
+              >
+                <MenuRoundedIcon style={{ color: "#000" }} />
+              </IconButton>
+              <Drawer
+                ref={drawerRef}
+                anchor="right"
+                open={drawer}
+                onClose={() => setDrawer(!drawer)}
+                className={styles.drawerStyle}
+                classes={{
+                  paper: styles.drawerPaper,
+                }}
+              >
+                <div className={styles.drawerButtonContainer}>
+                  <Link
+                    to="/"
+                    component={HomeButton}
+                    startIcon={<HomeRoundedIcon />}
+                  />
+                  <Link
+                    to="/Login"
+                    component={LoginButton}
+                    startIcon={<ExitToAppRoundedIcon />}
+                  />
+                  <Link
+                    to="/RegisterDonor"
+                    component={SignupButton}
+                    startIcon={<PersonAddRoundedIcon />}
+                  />
+                </div>
+              </Drawer>
+            </Typography>
+          )}
         </Toolbar>
       </AppBar>
     </>

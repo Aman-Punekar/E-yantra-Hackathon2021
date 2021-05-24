@@ -6,13 +6,12 @@ import {
   Typography,
   TextField,
   Button,
-  withStyles,
   withWidth,
 } from "@material-ui/core";
 import { useStyles } from "../DonorRegistration/donorRegistrationStyle";
 import { useDispatch, useSelector } from "react-redux";
 import { forgotPassword } from "../../Redux/ForgetPasswordSlice";
-import { Redirect, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { motion } from "framer-motion";
 import Aos from "aos";
 
@@ -26,7 +25,7 @@ function ForgotPassowrd({ width }) {
 
   useEffect(() => {
     if (GenPassword) {
-      return history.push("/RegisterDonor");
+      return history.push("/ForgotPassword/ResetPassword");
     }
   }, [GenPassword]);
 
@@ -35,7 +34,7 @@ function ForgotPassowrd({ width }) {
     const data = {
       phone: mobile,
     };
-    dispatch(forgotPassword(data));
+    const response = dispatch(forgotPassword(data));
   };
 
   useEffect(() => {
@@ -75,7 +74,7 @@ function ForgotPassowrd({ width }) {
         alignItems="center"
       >
         <Typography
-          variant="h3"
+          variant="h4"
           className={styles.headingReg}
           data-aos="fade-up"
           style={{ marginBottom: 50 }}

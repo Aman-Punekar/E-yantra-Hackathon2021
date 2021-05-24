@@ -20,9 +20,10 @@ import Aos from "aos";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import { LoginPageData } from "../../constants/stringConstants";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../Redux/LoginSlice";
 import { useHistory } from "react-router-dom";
+import { getUser } from "../../Redux/FetchUser";
 
 function LoginPage({ width }) {
   const styles = useStyles();
@@ -32,15 +33,23 @@ function LoginPage({ width }) {
   const dispatch = useDispatch();
   const tabSmall = /xs|sm/.test(width);
   const history = useHistory();
+  const LoginSlice = useSelector((state) => state.LoginSlice.loginStatus);
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
 
+  useEffect(() => {
+    if (LoginSlice) {
+      history.push("/DonorDashboard");
+    }
+  }, [LoginSlice]);
+
   const handleForgotPassword = (e) => {
     e.preventDefault();
     history.push("/ForgotPassword");
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -132,11 +141,14 @@ function LoginPage({ width }) {
               id="MobileNumber"
               placeholder="+91"
               value={mobile}
-              onChange={(prev) => setmobile(prev.target.value)}
+              onChange={(e) => setmobile(e.target.value)}
               {...varientProps}
               size="small"
               className="inputRounded"
               {...inputProps}
+              inputProps={{
+                maxLength: 10,
+              }}
             />
           </FormControl>
           <FormControl style={{ width: "60%", marginTop: 20 }}>

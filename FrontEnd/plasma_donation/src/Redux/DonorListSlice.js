@@ -18,7 +18,6 @@ const donorInfoList = createSlice({
     error: "",
     message: "",
     isLoading: false,
-    loginStatus: false,
     donorList: null,
   },
   reducers: {},
@@ -32,7 +31,6 @@ const donorInfoList = createSlice({
     },
     [donorList.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.loginStatus = true;
       state.donorList = action.payload;
     },
   },

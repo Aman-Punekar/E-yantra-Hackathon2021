@@ -8,14 +8,19 @@ import FacebookIcon from "@material-ui/icons/Facebook";
 import LinkedInIcon from "@material-ui/icons/LinkedIn";
 import TwitterIcon from "@material-ui/icons/Twitter";
 import Aos from "aos";
+import { useSelector } from "react-redux";
 
 function Footer() {
   const styles = useStyles();
+  const DonorLogin = useSelector(
+    (state) => state.SignupOTPSlice.signupSendStatus
+  );
+  const LoginSlice = useSelector((state) => state.LoginSlice.loginStatus);
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
 
-  return (
+  return DonorLogin || LoginSlice ? null : (
     <footer className={styles.footerMainContainer} data-aos="fade-up">
       <Grid
         container
