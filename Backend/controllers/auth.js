@@ -14,7 +14,6 @@ const { send } = require("process");
 // environment variables
 const JWT_AUTH_TOKEN = process.env.JWT_AUTH_TOKEN;
 const smsKey = process.env.SMS_SECRET_KEY;
-const JWT_REFRESH_TOKEN = process.env.JWT_REFRESH_TOKEN;
 
 /*
 '/sendOTP' route: 
@@ -150,7 +149,7 @@ const donorLogin = async (req, res) => {
           expires: new Date(new Date().getTime() + 86400 * 1000),
           sameSite: "strict",
         })
-        .json(await getUser(req.body.phone));
+        .send({ msg: "Success", phone: req.body.phone });
     } else {
       res.status(401).json({ success: false, msg: "Wrong Password" });
     }
@@ -169,7 +168,12 @@ const updatePasswordSendOtp = (req, res) => {
       if (result.length !== 0) {
         res.status(200).send(genAndSendOtp(phone));
       } else {
-        res.status(400).send({ msg: `No account with mobile number ${phone}` });
+        res
+          .status(200)
+          .send({
+            msg: `No account with mobile number ${phone}`,
+            success: false,
+          });
       }
     })
     .catch((err) => {

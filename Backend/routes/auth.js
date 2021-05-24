@@ -4,8 +4,9 @@ const {
   sendOtp,
   verifyOtp,
   donorLogin,
-  updatePasswordSendOtp,
   logout,
+  updatePasswordSendOtp,
+  
 } = require("../controllers/auth");
 
 const isMember = require("./authMiddlewares").isMemeber;
