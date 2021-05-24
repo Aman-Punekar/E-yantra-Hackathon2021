@@ -122,7 +122,8 @@ npm install
 node app.js
 ```
  
-#before running backend make sure you have .env file with few varibles
+### before running backend make sure you have .env file with few varibles
+```
 DATABASE = mongodb+srv://Aman:acmgit@146@cluster0.wig9v.mongodb.net/ACM_SITE?retryWrites=true&w=majority
 ACCOUNT_SID =ACe76bd995e206ab993cdbe06d22004e7
 AUTH_TOKEN =796ec1d88e088c5e177594f5e73ba789
@@ -131,7 +132,7 @@ JWT_REFRESH_TOKEN =78a63b0bdad412dd16d65fff96bc95353fa470f2dc8ba487040e187605f3a
 SMS_SECRET_KEY =dc17e4c9da8a90324fed9e981dbff62825858151c6e0054b9e9f34ce5c7bf6c0
 ACCOUNT_SID = ACe76bd995e206ab993cdbe06d22004e73
 AUTH_TOKEN = 796ec1d88e088c5e177594f5e73ba789
-
+```
 ## Run the both FrontEnd and Backend 
 
 # 🌟 You are all set!
