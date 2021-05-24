@@ -4,10 +4,8 @@ import api from "../Api/api";
 export const donorList = createAsyncThunk(
   "donorInfoList/donorList",
   async (data) => {
-    console.log(data);
     const res = await api.post("/api/visitor/visitorQerryOfDonor", data);
     const dataResponse = JSON.parse(JSON.stringify(res.data));
-    console.log(dataResponse);
     return dataResponse;
   }
 );

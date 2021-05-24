@@ -23,11 +23,9 @@ const addDonorInfo = (req, res) => {
   newUser
     .save()
     .then((user) => {
-      console.log(user);
       res.status(200).send({ msg: "User created Successfully" });
     })
     .catch((err) => {
-      console.log(err);
       res.status(400).send({
         err: "Not able to save user in DB",
       });
@@ -57,11 +55,9 @@ const updateDonorInfo = (req, res) => {
     }
   )
     .then((user) => {
-      // console.log(user);
       res.status(200).send({ msg: "Update Successful" });
     })
     .catch((err) => {
-      // console.log(err);
       res.status(400).send({
         err: err,
         msg: "No able to update",

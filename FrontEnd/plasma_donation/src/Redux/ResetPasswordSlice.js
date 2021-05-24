@@ -6,7 +6,6 @@ export const confirmResetPassword = createAsyncThunk(
   async (data) => {
     const res = await api.post("/api/auth/verifyOTP", data);
     const dataResponse = JSON.parse(JSON.stringify(res.data));
-    console.log(dataResponse);
     return dataResponse;
   }
 );

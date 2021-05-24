@@ -46,6 +46,7 @@ function Header({ width }) {
 
   const handleLogout = () => {
     dispatch(logout());
+    window.location.reload(false);
   };
 
   const HomeButton = React.forwardRef((props, ref) => (

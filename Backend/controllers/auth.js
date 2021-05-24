@@ -25,7 +25,6 @@ appended creating fullhash.
 
 */
 const sendOtp = (req, res) => {
-  console.log(req.body.phone);
   res.status(200).send(genAndSendOtp(req.body.phone));
 };
 
@@ -106,7 +105,6 @@ const verifyOtp = async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
     res.status(500).send({ msg: err });
   }
 };
@@ -161,7 +159,6 @@ const donorLogin = async (req, res) => {
       res.status(401).json({ success: false, msg: "Wrong Password" });
     }
   } catch (e) {
-    console.log(e);
     res.status(400).send({ err: e });
   }
 };
@@ -172,7 +169,6 @@ const updatePasswordSendOtp = (req, res) => {
   donorCredentials
     .find({ mobileNo: phone })
     .then((result) => {
-      console.log(`in updatePasswordSendOtp ${result}`);
       if (result.length !== 0) {
         res.status(200).send(genAndSendOtp(phone));
       } else {
@@ -183,7 +179,6 @@ const updatePasswordSendOtp = (req, res) => {
       }
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).send(err);
     });
 };

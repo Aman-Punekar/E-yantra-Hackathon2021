@@ -6,7 +6,6 @@ export const forgotPassword = createAsyncThunk(
   async (data) => {
     const res = await api.post("/api/auth/forgotPasswordGenOtp", data);
     const dataResponse = JSON.parse(JSON.stringify(res.data));
-    console.log(dataResponse);
     return dataResponse;
   }
 );
