@@ -4,7 +4,6 @@ import api from "../Api/api";
 export const sendOTP = createAsyncThunk("signupOtp/sendOTP", async (data) => {
   const res = await api.post("/api/auth/verifyOTP", data);
   const dataResponse = JSON.parse(JSON.stringify(res.data));
-  console.log(dataResponse);
   return dataResponse;
 });
 

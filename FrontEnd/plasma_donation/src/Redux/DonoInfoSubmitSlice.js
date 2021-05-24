@@ -8,7 +8,6 @@ export const donorForm = createAsyncThunk(
       withCredentials: true,
     });
     const dataResponse = JSON.parse(JSON.stringify(res.data));
-    console.log(dataResponse);
     return dataResponse;
   }
 );

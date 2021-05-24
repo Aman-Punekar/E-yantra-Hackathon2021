@@ -1,5 +1,5 @@
 require("dotenv").config();
-const Donor = require("../models/Donor");
+const donorCredentials = require("../models/donorCredentials");
 const jwt = require("jsonwebtoken");
 const JWT_AUTH_TOKEN = process.env.JWT_AUTH_TOKEN;
 
@@ -23,11 +23,9 @@ const authenticateUser = (req, res, next) => {
 };
 
 const isMemeber = (req, res, next) => {
-  console.log(req.body.phone);
-
-  Donor.find({ mobileNo: req.body.phone })
+  donorCredentials
+    .find({ mobileNo: req.body.phone })
     .then((result) => {
-      console.log(result);
       if (result.length !== 0) {
         res
           .status(409)
@@ -37,7 +35,6 @@ const isMemeber = (req, res, next) => {
       }
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).send(err);
     });
 };

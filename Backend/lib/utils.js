@@ -1,45 +1,42 @@
 const donorCredentials = require("../models/donorCredentials");
+require("dotenv").config();
 const crypto = require("crypto");
 const Donor = require("../models/Donor");
-const ACCOUNT_SID = "ACe76bd995e206ab993cdbe06d22004e73";
-const AUTH_TOKEN = "796ec1d88e088c5e177594f5e73ba789";
+const ACCOUNT_SID = process.env.ACCOUNT_SID;
+const AUTH_TOKEN = process.env.AUTH_TOKEN;
 const smsKey = process.env.SMS_SECRET_KEY;
 const client = require("twilio")(ACCOUNT_SID, AUTH_TOKEN); // configuring twilio
 
 const deleteForgottenPassword = async (phone) => {
-  try{
-      let result = await donorCredentials.deleteOne({mobileNo:phone});
-      return result.n;
-  }catch(err){
-    res.status(500).send({err:err});
+  try {
+    let result = await donorCredentials.deleteOne({ mobileNo: phone });
+    return result.n;
+  } catch (err) {
+    res.status(500).send({ err: err });
   }
-}
+};
 
-function genPasswordHash(password, phone) {
-  var salt = crypto.randomBytes(32).toString("hex");
-  var genHash = crypto
-    .pbkdf2Sync(password, salt, 10000, 64, "sha512")
-    .toString("hex");
+const genPasswordHash = async (password, phone) => {
+  try {
+    var salt = crypto.randomBytes(32).toString("hex");
+    var genHash = crypto
+      .pbkdf2Sync(password, salt, 10000, 64, "sha512")
+      .toString("hex");
 
-  const newCredentials = new donorCredentials({
-    mobileNo: phone,
-    salt: salt,
-    hash: genHash,
-  });
-
-  newCredentials
-    .save()
-    .then((credentials) => {
-      console.log(credentials);
-      return;
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(400).send({
-        err: err,
-        msg: "Could not save credentials due to some error",
-      });
+    const newCredentials = new donorCredentials({
+      mobileNo: phone,
+      salt: salt,
+      hash: genHash,
     });
+
+    const credentials = await newCredentials.save();
+    return;
+  } catch (err) {
+    res.status(400).send({
+      err: err,
+      msg: "Could not save credentials due to some error",
+    });
+  }
 };
 
 function validPassword(password, hash, salt) {
@@ -47,7 +44,7 @@ function validPassword(password, hash, salt) {
     .pbkdf2Sync(password, salt, 10000, 64, "sha512")
     .toString("hex");
   return hash === hashVerify;
-};
+}
 
 function genAndSendOtp(phone) {
   const phoneTwilio = phone.toString() + "+91";
@@ -75,20 +72,22 @@ function genAndSendOtp(phone) {
     hash: fullhash,
     otp,
   };
-};
-
+}
 
 async function getUser(phone) {
   try {
-    const userInfo= await Donor.find({ mobileNo: phone });
-    console.log(userInfo[0]);
-    // let data = userInfo[0];
-    return userInfo[0] ;
-  }
-  catch (err) {
-    console.log(err);
+    const userInfo = await Donor.findOne({ mobileNo: phone });
+
+    return userInfo;
+  } catch (err) {
     res.status(500).send(err);
   }
-};
+}
 
-module.exports = { genPasswordHash, validPassword, genAndSendOtp, getUser, deleteForgottenPassword };
+module.exports = {
+  genPasswordHash,
+  validPassword,
+  genAndSendOtp,
+  getUser,
+  deleteForgottenPassword,
+};

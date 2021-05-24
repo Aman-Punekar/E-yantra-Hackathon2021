@@ -4,10 +4,8 @@ import api from "../Api/api";
 export const donorList = createAsyncThunk(
   "donorInfoList/donorList",
   async (data) => {
-    console.log(data);
     const res = await api.post("/api/visitor/visitorQerryOfDonor", data);
     const dataResponse = JSON.parse(JSON.stringify(res.data));
-    console.log(dataResponse);
     return dataResponse;
   }
 );
@@ -18,7 +16,6 @@ const donorInfoList = createSlice({
     error: "",
     message: "",
     isLoading: false,
-    loginStatus: false,
     donorList: null,
   },
   reducers: {},
@@ -32,7 +29,6 @@ const donorInfoList = createSlice({
     },
     [donorList.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.loginStatus = true;
       state.donorList = action.payload;
     },
   },

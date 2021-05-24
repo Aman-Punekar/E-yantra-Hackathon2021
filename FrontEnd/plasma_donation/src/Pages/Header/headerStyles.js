@@ -40,7 +40,7 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   routeButtons: {
-    width: "60%",
+    width: "100%",
     display: "flex",
     justifyContent: "space-around",
     flexDirection: "row",
@@ -49,7 +49,7 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   authButtonContainer: {
-    width: "40%",
+    width: "100%",
     display: "flex",
     justifyContent: "space-around",
     flexDirection: "row",
