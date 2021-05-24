@@ -5,12 +5,10 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
-import DonorRegistration from "../Pages/DonorRegistration/DonorRegistration";
 import Header from "../Pages/Header/Header";
 import Footer from "../Pages/Footer/Footer";
 import Loading from "../Pages/Loading/Loading";
 import { useSelector } from "react-redux";
-import ResetPassword from "../Pages/ResetPassword/ResetPassword";
 
 const LandingPage = lazy(() => import("../Pages/LandingPage/LandingPage"));
 const LoginPage = lazy(() => import("../Pages/LoginPage/LoginPage"));
@@ -21,18 +19,49 @@ const DonorDashboard = lazy(() =>
   import("../Pages/DonorDashboard/DonorDashboard")
 );
 
+const ResetPassword = lazy(() =>
+  import("../Pages/ResetPassword/ResetPassword")
+);
+const DonorRegistration = lazy(() =>
+  import("../Pages/DonorRegistration/DonorRegistration")
+);
+
 function PrivateRoute({ children, ...rest }) {
+  const DonorLogin = useSelector(
+    (state) => state.SignupOTPSlice.signupSendStatus
+  );
   const LoginSlice = useSelector((state) => state.LoginSlice.loginStatus);
   return (
     <Route
       {...rest}
       render={({ location }) => {
-        return LoginSlice === true ? (
+        return LoginSlice || DonorLogin === true ? (
           children
         ) : (
           <Redirect
             to={{
               pathname: "/Login",
+              state: { from: location },
+            }}
+          />
+        );
+      }}
+    />
+  );
+}
+
+function ResetPrivateRoute({ children, ...rest }) {
+  const GenPassword = useSelector((state) => state.GenPassword.gotNumber);
+  return (
+    <Route
+      {...rest}
+      render={({ location }) => {
+        return GenPassword === true ? (
+          children
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/ForgotPassword",
               state: { from: location },
             }}
           />
@@ -55,10 +84,9 @@ function RootRouting(props) {
           <PrivateRoute path="/DonorDashboard">
             <DonorDashboard />
           </PrivateRoute>
-          <Route
-            path="/ForgotPassword/ResetPassword"
-            component={ResetPassword}
-          />
+          <ResetPrivateRoute path="/ResetPassword">
+            <ResetPassword />
+          </ResetPrivateRoute>
         </Switch>
       </Suspense>
       <Footer />

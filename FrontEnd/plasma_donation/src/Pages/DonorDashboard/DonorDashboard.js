@@ -61,6 +61,7 @@ function DonorDashboard({ width }) {
 
   const FetchUser = useSelector((state) => state.FetchUser.user);
   const MobileNumber = useSelector((state) => state.SignupOTPSlice.shortData);
+  const SigninStatus = useSelector((state) => state.DonorInfo.signupSendStatus);
   const [DonorInfo, setDonorInfo] = useState({
     Name: "",
     LastName: "",
@@ -83,11 +84,19 @@ function DonorDashboard({ width }) {
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
-    dispatch(getUser());
+    if (MobileNumber === null) {
+      dispatch(getUser());
+    }
   }, []);
 
   useEffect(() => {
-    if (FetchUser !== null) {
+    if (SigninStatus) {
+      dispatch(getUser());
+    }
+  }, [SigninStatus]);
+
+  useEffect(() => {
+    if (FetchUser !== null || FetchUser !== "") {
       setDonorInfo({
         Name: FetchUser.firstName,
         LastName: FetchUser.lastName,
@@ -158,9 +167,7 @@ function DonorDashboard({ width }) {
         bloodGroup: BloodGroup,
         isAvailable: isAvailable,
       };
-      if (FetchUser !== null) {
-        const hasNoChanged = FetchUser.mobileNo.toString() !== DonorInfo.Mobile;
-        data.hasNoChanged = hasNoChanged;
+      if (FetchUser !== null || FetchUser !== "") {
         dispatch(updateProfile(data));
       } else {
         if (Terms) {
@@ -457,29 +464,26 @@ function DonorDashboard({ width }) {
               justify="space-between"
               className={styles.formBodySection}
             >
-              <FormControl style={{ width: "100%" }}>
+              <FormControl
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                }}
+              >
                 <Typography varient="subtitle1" className={styles.lableStyle}>
-                  Covid-19 Report:
+                  Available For Donating:
                 </Typography>
-                <input
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  id="icon-button-file"
-                  type="file"
+                <Checkbox
+                  checked={isAvailable}
+                  onChange={() => setisAvailable(!isAvailable)}
+                  inputProps={{ "aria-label": "checkbox" }}
                 />
-                <label htmlFor="icon-button-file">
-                  <IconButton
-                    color="primary"
-                    aria-label="upload picture"
-                    component="span"
-                  >
-                    <InsertDriveFileIcon />
-                  </IconButton>
-                </label>
               </FormControl>
             </Grid>
           </MainWrapper>
-          {FetchUser === null ? (
+          {FetchUser === null || FetchUser === "" ? (
             <MainWrapper xsValue={xsValue} smValue={smValue}>
               <Grid
                 item

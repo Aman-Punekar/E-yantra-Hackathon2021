@@ -25,6 +25,7 @@ import DonorInfoList from "./DonorListSlice";
 import ProfileUpdate from "./UpdateProfileSlice";
 import GenPassword from "./ForgetPasswordSlice";
 import FetchUser from "./FetchUser";
+import ResetPassword from "./ResetPasswordSlice";
 
 const reducer = combineReducers({
   SignupSlice,
@@ -35,12 +36,20 @@ const reducer = combineReducers({
   ProfileUpdate,
   GenPassword,
   FetchUser,
+  ResetPassword,
 });
 
 const persistConfig = {
   key: "root",
   storage: storage,
-  whitelist: ["LoginSlice", "SignupOTPSlice", "ProfileUpdate", "FetchUser"],
+  whitelist: [
+    "LoginSlice",
+    "SignupOTPSlice",
+    "ProfileUpdate",
+    "FetchUser",
+    "GenPassword",
+    "ResetPassword",
+  ],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducer);

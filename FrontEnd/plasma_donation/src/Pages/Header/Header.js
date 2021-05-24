@@ -44,8 +44,7 @@ function Header({ width }) {
     }
   }, [lapDrawer]);
 
-  const handleLogout = (e) => {
-    e.preventDefault();
+  const handleLogout = () => {
     dispatch(logout());
   };
 

@@ -26,6 +26,7 @@ import { DashboardRegistration } from "../../constants/stringConstants";
 import { useDispatch, useSelector } from "react-redux";
 import { sendSignup } from "../../Redux/SignInSlice";
 import { sendOTP } from "../../Redux/OtpSendSlice";
+import { useHistory } from "react-router";
 
 function DonorRegistration({ width }) {
   const styles = useStyles();
@@ -40,11 +41,20 @@ function DonorRegistration({ width }) {
   const responseData = useSelector((state) => state.SignupSlice.dataSend);
   const LoadingForOtp = useSelector((state) => state.SignupSlice.isLoading);
   const ResponseFromOtpGen = useSelector((state) => state.SignupSlice.response);
+  const SignupSendStatus = useSelector(
+    (state) => state.SignupOTPSlice.signupSendStatus
+  );
+  const history = useHistory();
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
 
+  useEffect(() => {
+    if (SignupSendStatus) {
+      history.push("/DonorDashboard");
+    }
+  }, [SignupSendStatus]);
   const handleOtpSend = () => {
     // Nothing for now
     const data = {

@@ -25,16 +25,15 @@ function ForgotPassowrd({ width }) {
 
   useEffect(() => {
     if (GenPassword) {
-      return history.push("/ForgotPassword/ResetPassword");
+      history.push("/ResetPassword");
     }
   }, [GenPassword]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     const data = {
       phone: mobile,
     };
-    const response = dispatch(forgotPassword(data));
+    dispatch(forgotPassword(data));
   };
 
   useEffect(() => {

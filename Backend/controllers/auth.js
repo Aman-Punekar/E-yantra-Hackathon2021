@@ -67,7 +67,7 @@ const verifyOtp = async (req, res) => {
 
       if (n !== 0) {
         genPasswordHash(req.body.password, phone);
-        res.status(201).send({ msg: "Otp changed successfully" });
+        res.status(201).send({ msg: "Otp changed successfully", phone });
       }
 
       genPasswordHash(req.body.password, phone);
@@ -168,12 +168,10 @@ const updatePasswordSendOtp = (req, res) => {
       if (result.length !== 0) {
         res.status(200).send(genAndSendOtp(phone));
       } else {
-        res
-          .status(200)
-          .send({
-            msg: `No account with mobile number ${phone}`,
-            success: false,
-          });
+        res.status(200).send({
+          msg: `No account with mobile number ${phone}`,
+          success: false,
+        });
       }
     })
     .catch((err) => {

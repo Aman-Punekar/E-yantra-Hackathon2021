@@ -7,6 +7,7 @@ export const getUser = createAsyncThunk("fetchUser/getUser", async () => {
       withCredentials: true,
     });
     const dataResponse = JSON.parse(JSON.stringify(res.data));
+    console.log(typeof dataResponse);
     return dataResponse;
   } catch (error) {
     console.log(error);
