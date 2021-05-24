@@ -67,7 +67,7 @@ const verifyOtp = async (req, res) => {
 
       if (n !== 0) {
         genPasswordHash(req.body.password, phone);
-        res.status(201).send({ msg: "Otp changed successfully", phone });
+        res.status(201).send({ msg: "password changed successfully", phone });
       }
 
       genPasswordHash(req.body.password, phone);
@@ -137,6 +137,13 @@ const donorLogin = async (req, res) => {
         }
       );
 
+      var result = await getUser(req.body.phone);
+      if(result.length === 0){
+        returnResponse = { msg: "Success", phone: req.body.phone };
+      }else{
+        returnResponse = { msg: "Success", phone: null };
+      }
+
       res
         .status(200)
         .cookie("accessToken", accessToken, {
@@ -149,7 +156,7 @@ const donorLogin = async (req, res) => {
           expires: new Date(new Date().getTime() + 86400 * 1000),
           sameSite: "strict",
         })
-        .send({ msg: "Success", phone: req.body.phone });
+        .send(returnResponse);
     } else {
       res.status(401).json({ success: false, msg: "Wrong Password" });
     }

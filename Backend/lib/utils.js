@@ -80,10 +80,9 @@ function genAndSendOtp(phone) {
 
 async function getUser(phone) {
   try {
-    const userInfo= await Donor.find({ mobileNo: phone });
-    console.log(userInfo[0]);
-    // let data = userInfo[0];
-    return userInfo[0] ;
+    const userInfo= await Donor.findOne({ mobileNo: phone });
+    
+    return userInfo;
   }
   catch (err) {
     console.log(err);
